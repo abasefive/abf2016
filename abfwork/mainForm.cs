@@ -387,6 +387,15 @@ namespace abfwork
                 timer1.Start();
                 //PwdChange();
             }
+            else if (comboBox1.SelectedIndex.ToString() == "6")
+            {//秒杀
+
+                richTextBox1.AppendText(string.Format("\r\n{0}: 开始秒杀...", DateTime.Now.ToString("HH:mm:ss")));
+                pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
+                timer1.Interval = 10;//提交秒杀频率
+                timer1.Start();
+                SecKillAward();
+            }
         }
         /// <summary>
         /// 暂停定时器
@@ -1009,6 +1018,65 @@ namespace abfwork
             
         }
 
+        /// <summary>
+        /// 秒杀
+        /// </summary>
+        private void SecKillAward()
+        {
+            useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
+            password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
+            string result = LoginOn(useName, password);
+            if (result == "true")
+            {//列出详细的账号信息
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
+                HttpHelper http = new HttpHelper();
+                HttpItem itemGet = new HttpItem()
+                {
+                    URL = "http://utc.pepsi.cn/SecurityCode/SecKillCode",//URL     必需项    
+                    Method = "get",
+                    Cookie = cookie,//字符串Cookie     可选项
+                    //用户代理设置为手机浏览器
+                    UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
+                    IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                    Referer = "http://www.ksfteasp.com/WAP/Register.html",
+                    //Postdata = "&oldvalue=" + captcha,//Post数据     可选项GET时不需要写
+                    Timeout = 100000,//连接超时时间     可选项默认为100000    
+                    ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                    ContentType = "application/x-www-form-urlencoded",//返回类型    可选项有默认值 
+                };
+                pictureBox1.Image = http.GetImage(itemGet);//加载秒杀验证码
+
+                captcha = textBox_yzm.Text;
+
+                if (captcha != "")
+                    isbtok = 1;
+
+            }
+        }
+
+        private void SecKillAward_bt()
+        { //秒杀提交
+            item = new HttpItem()
+            {//兑换cdk
+                URL = "http://utc.pepsi.cn/Activity/SecKillAward",//URL     必需项    
+                Method = "POST",
+                Cookie = cookie,//字符串Cookie     可选项
+                //用户代理设置为手机浏览器
+                UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
+                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                Referer = "http://utc.pepsi.cn/Home/Index",
+                Postdata = "code=" + captcha,//Post数据     可选项GET时不需要写
+                Timeout = 100000,//连接超时时间     可选项默认为100000    
+                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
+            };
+            resultitem = http.GetHtml(item);
+            string result = resultitem.Html;
+            if (result == "1")
+                timer1.Stop();
+            richTextBox1.AppendText(string.Format("\r\n{0}: {1} - {2}", DateTime.Now.ToString("HH:mm:ss"), useName,result));
+        }
+
         /*
         //取当前webBrowser登录后的Cookie值   
         [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
@@ -1410,6 +1478,7 @@ namespace abfwork
                 return "结果校验不正确";
             }
         }        
+
         private void timer1_Tick(object sender, EventArgs e)
         {//检测
 
@@ -1555,8 +1624,32 @@ namespace abfwork
                 }
                 CashLotteryExchange();
             }
-            
+            else if (comboBox1.SelectedIndex.ToString() == "5" && isbtok != 0)
+            {//渴望币抽奖 
+                isbtok = 0;//重置状态
+                if (++numIndexOfDatagridview1Row == dataGridView1.RowCount)
+                {
+                    timer1.Stop();
+                    MessageBox.Show("全部完成！", "提示");
+                    return;
+                }
+                else
+                {
+
+                    this.dataGridView1.Rows[numIndexOfDatagridview1Row].Selected = true;//换下一个帐号
+                    if (numIndexOfDatagridview1Row > 10)
+                        dataGridView1.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview1Row - 10;//滑块位置更新
+
+                }
+                //CashLotteryExchange();
+            }
+
+            else if (comboBox1.SelectedIndex.ToString() == "6" && isbtok != 0)
+            {//秒杀
+                SecKillAward_bt();
+            }
         }
+
         private void textBox_yzm_TextChanged(object sender, EventArgs e)
         {
             if (textBox_yzm.Text.Length == 5  && checkBox_uu.Checked==false && is_yzm_TextChanged==0)
@@ -1575,6 +1668,7 @@ namespace abfwork
                 }
             }
         }
+
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             getVorityImage();//加载验证码图片，打码

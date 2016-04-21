@@ -33,6 +33,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.textBox_yzm = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -81,8 +83,6 @@
             this.ColumnPwd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label9 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -141,6 +141,31 @@
             this.groupBox4.TabIndex = 7;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "操作";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "兑换-1元话费",
+            "兑换-门票",
+            "抽奖-旅游卡",
+            "抽奖-电容笔",
+            "抽奖-时尚耳机",
+            "抽奖-运动摄像机"});
+            this.comboBox2.Location = new System.Drawing.Point(65, 59);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(135, 20);
+            this.comboBox2.TabIndex = 9;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 62);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "子选项：";
             // 
             // textBox_yzm
             // 
@@ -208,7 +233,8 @@
             "注册账号",
             "修改密码",
             "渴望币兑换",
-            "渴望币抽奖"});
+            "渴望币抽奖",
+            "秒杀"});
             this.comboBox1.Location = new System.Drawing.Point(65, 30);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(135, 20);
@@ -363,7 +389,7 @@
             this.textBox_yc.Name = "textBox_yc";
             this.textBox_yc.Size = new System.Drawing.Size(46, 21);
             this.textBox_yc.TabIndex = 3;
-            this.textBox_yc.Text = "100";
+            this.textBox_yc.Text = "1000";
             this.textBox_yc.TextChanged += new System.EventHandler(this.textBox_yc_TextChanged);
             // 
             // label_yc
@@ -638,31 +664,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 62);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(53, 12);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "子选项：";
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "兑换-1元话费",
-            "兑换-门票",
-            "抽奖-旅游卡",
-            "抽奖-电容笔",
-            "抽奖-时尚耳机",
-            "抽奖-运动摄像机"});
-            this.comboBox2.Location = new System.Drawing.Point(65, 59);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(135, 20);
-            this.comboBox2.TabIndex = 9;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // mainForm
             // 
