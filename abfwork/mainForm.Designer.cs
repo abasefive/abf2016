@@ -72,6 +72,15 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button_kdcb = new System.Windows.Forms.Button();
+            this.button_kdbh = new System.Windows.Forms.Button();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.comboBox_kd = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.ColumnCDK = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -83,6 +92,8 @@
             this.ColumnPwd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.comboBox_url = new System.Windows.Forms.ComboBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -91,6 +102,7 @@
             this.tabPage3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -154,7 +166,7 @@
             "抽奖-运动摄像机"});
             this.comboBox2.Location = new System.Drawing.Point(65, 59);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(135, 20);
+            this.comboBox2.Size = new System.Drawing.Size(124, 20);
             this.comboBox2.TabIndex = 9;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
@@ -234,11 +246,14 @@
             "修改密码",
             "渴望币兑换",
             "渴望币抽奖",
-            "秒杀"});
+            "秒杀",
+            "兑换秒杀10",
+            "兑换秒杀11"});
             this.comboBox1.Location = new System.Drawing.Point(65, 30);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(135, 20);
+            this.comboBox1.Size = new System.Drawing.Size(124, 20);
             this.comboBox1.TabIndex = 0;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // label_cdkcount
             // 
@@ -346,6 +361,7 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(6, 20);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -354,6 +370,8 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label18);
+            this.tabPage3.Controls.Add(this.comboBox_url);
             this.tabPage3.Controls.Add(this.textBox_duihuancishu);
             this.tabPage3.Controls.Add(this.label13);
             this.tabPage3.Controls.Add(this.textBox_yc);
@@ -370,9 +388,9 @@
             // 
             this.textBox_duihuancishu.Location = new System.Drawing.Point(89, 17);
             this.textBox_duihuancishu.Name = "textBox_duihuancishu";
-            this.textBox_duihuancishu.Size = new System.Drawing.Size(21, 21);
+            this.textBox_duihuancishu.Size = new System.Drawing.Size(77, 21);
             this.textBox_duihuancishu.TabIndex = 7;
-            this.textBox_duihuancishu.Text = "5";
+            this.textBox_duihuancishu.Text = "1";
             // 
             // label13
             // 
@@ -387,9 +405,9 @@
             // 
             this.textBox_yc.Location = new System.Drawing.Point(102, 146);
             this.textBox_yc.Name = "textBox_yc";
-            this.textBox_yc.Size = new System.Drawing.Size(46, 21);
+            this.textBox_yc.Size = new System.Drawing.Size(64, 21);
             this.textBox_yc.TabIndex = 3;
-            this.textBox_yc.Text = "1000";
+            this.textBox_yc.Text = "3000";
             this.textBox_yc.TextChanged += new System.EventHandler(this.textBox_yc_TextChanged);
             // 
             // label_yc
@@ -533,6 +551,94 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "用户名：";
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.button_kdcb);
+            this.tabPage4.Controls.Add(this.button_kdbh);
+            this.tabPage4.Controls.Add(this.label17);
+            this.tabPage4.Controls.Add(this.label15);
+            this.tabPage4.Controls.Add(this.label14);
+            this.tabPage4.Controls.Add(this.textBox2);
+            this.tabPage4.Controls.Add(this.textBox1);
+            this.tabPage4.Controls.Add(this.comboBox_kd);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(261, 173);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "宽带拨号";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button_kdcb
+            // 
+            this.button_kdcb.Location = new System.Drawing.Point(121, 112);
+            this.button_kdcb.Name = "button_kdcb";
+            this.button_kdcb.Size = new System.Drawing.Size(75, 23);
+            this.button_kdcb.TabIndex = 7;
+            this.button_kdcb.Text = "重拨";
+            this.button_kdcb.UseVisualStyleBackColor = true;
+            this.button_kdcb.Click += new System.EventHandler(this.button_kdcb_Click);
+            // 
+            // button_kdbh
+            // 
+            this.button_kdbh.Location = new System.Drawing.Point(8, 112);
+            this.button_kdbh.Name = "button_kdbh";
+            this.button_kdbh.Size = new System.Drawing.Size(93, 24);
+            this.button_kdbh.TabIndex = 6;
+            this.button_kdbh.Text = "断线";
+            this.button_kdbh.UseVisualStyleBackColor = true;
+            this.button_kdbh.Click += new System.EventHandler(this.button_kdbh_Click);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(54, 78);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(35, 12);
+            this.label17.TabIndex = 5;
+            this.label17.Text = "密码:";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(42, 50);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(47, 12);
+            this.label15.TabIndex = 4;
+            this.label15.Text = "用户名:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 25);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(83, 12);
+            this.label14.TabIndex = 3;
+            this.label14.Text = "宽带连接名称:";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(95, 75);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(100, 21);
+            this.textBox2.TabIndex = 2;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(95, 47);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 21);
+            this.textBox1.TabIndex = 1;
+            // 
+            // comboBox_kd
+            // 
+            this.comboBox_kd.FormattingEnabled = true;
+            this.comboBox_kd.Location = new System.Drawing.Point(95, 21);
+            this.comboBox_kd.Name = "comboBox_kd";
+            this.comboBox_kd.Size = new System.Drawing.Size(100, 20);
+            this.comboBox_kd.TabIndex = 0;
+            this.comboBox_kd.SelectedIndexChanged += new System.EventHandler(this.comboBox_kd_SelectedIndexChanged);
+            // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -665,6 +771,27 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // comboBox_url
+            // 
+            this.comboBox_url.FormattingEnabled = true;
+            this.comboBox_url.Items.AddRange(new object[] {
+            "手机wap",
+            "电脑web"});
+            this.comboBox_url.Location = new System.Drawing.Point(89, 51);
+            this.comboBox_url.Name = "comboBox_url";
+            this.comboBox_url.Size = new System.Drawing.Size(77, 20);
+            this.comboBox_url.TabIndex = 8;
+            this.comboBox_url.SelectedIndexChanged += new System.EventHandler(this.comboBox_url_SelectedIndexChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 54);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(65, 12);
+            this.label18.TabIndex = 9;
+            this.label18.Text = "协议端口：";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -690,7 +817,8 @@
             this.KeyPreview = true;
             this.Name = "mainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "兑换客户端";
+            this.Text = "百事可乐";
+            this.Load += new System.EventHandler(this.mainForm_Load_1);
             this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -703,6 +831,8 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -767,6 +897,17 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ComboBox comboBox_kd;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button button_kdbh;
+        private System.Windows.Forms.Button button_kdcb;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox comboBox_url;
 
     }
 }

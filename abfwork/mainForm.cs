@@ -21,6 +21,8 @@ using System.Timers;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using CsharpHttpHelper;
+using ConnectionDial;
+using Microsoft.Win32;
 
 
 namespace abfwork
@@ -33,9 +35,14 @@ namespace abfwork
         DataTable dt_cdk = new DataTable();
         int dtnumflag = 0,dtcdkflag=0;//是否第一次添加数据
 
+        private Ras ras;//宽带拨号
+
+        string duankou_url = "";
+
         string prizeID = "00";//价值类别
         string freedrink_cnt = "0";//免喝数量
         int is_yzm_TextChanged = 0;//是否触发
+        int is_huanzh_ok = 0;//换账号是否成功
         int pwd_weishu = 0;//密码位数
         int retry_num = 0;//重新尝试次数
         string yanchi = "0";
@@ -94,6 +101,10 @@ namespace abfwork
         public mainForm()
         {
             InitializeComponent();
+            
+            //this.ras = new Ras(new Ras.ConnectionNotify(RasConnectNotify), 1000.0);
+            this.ras = new Ras();
+
             if (File.Exists("dama.bin") == true)
             {
                 StreamReader reader = new StreamReader("dama.bin", Encoding.Default);
@@ -136,8 +147,59 @@ namespace abfwork
             Directory.CreateDirectory(logdir);//创建日志目录
             textBox_yzm.Focus();
             this.comboBox1.SelectedIndex = 1;
-            
-        } 
+            this.comboBox_url.SelectedIndex = 0;
+            duankou_url = "http://2016utc.pepsi.cn/";
+        }
+
+        /// <summary>
+        /// 自动加载宽带连接信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mainForm_Load_1(object sender, EventArgs e)
+        {
+
+            string[] strs;
+            string str;
+            ////strs = GetAllAdslNameByKey();//获取所有的宽带连接名称
+            //this.ras.GetEntries(out strs, out str);
+            //foreach (string s in strs)
+            //{
+            //    comboBox_kd.Items.Add(s);
+            //}
+            //comboBox_kd.SelectedIndex = 0;
+
+            //showAttr();
+        }
+
+        /// <summary>
+        /// 显示宽带连接信息
+        /// </summary>
+        private void showAttr()
+        {
+            int index = comboBox_kd.SelectedIndex;
+            if (index >= 0)
+            {
+                string str;
+                string str2;
+                string str3;
+                string str4;
+                bool flag;
+                this.ras.GetEntryParams((string)comboBox_kd.SelectedItem, out str, out str2, out str3, out flag, out str4);
+                
+                this.textBox1.Text = str2;
+                this.textBox2.Text = str3;
+            }
+        }
+
+        public void RasConnectNotify(string strNotify, int Connect)
+        {
+            richTextBox1.BeginInvoke(new EventHandler(delegate
+            {
+                richTextBox1.AppendText(strNotify);
+            }));
+        }
+
         /// <summary>
         /// 让DataGridView显示行号   见：www.cnblogs.com/JuneZhang/archive/2011/11/21/2257630.html
         /// </summary>
@@ -315,6 +377,7 @@ namespace abfwork
                 MessageBox.Show("文件内容错误：请导入正确的CDK数据！", "错误：" + e1.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         /// <summary>
         /// 开始操作-定时器开启
         /// </summary>
@@ -342,7 +405,7 @@ namespace abfwork
                     return;
                 }
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始兑换cdk...", DateTime.Now.ToString("HH:mm:ss")));
-                timer1.Interval = 1000;
+                timer1.Interval = Int32.Parse(textBox_yc.Text);
                 timer1.Start();
                 textBox_yzm.Focus();
                 duihuan();
@@ -393,10 +456,29 @@ namespace abfwork
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始秒杀...", DateTime.Now.ToString("HH:mm:ss")));
                 pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
                 timer1.Interval = 10;//提交秒杀频率
-                timer1.Start();
+                //timer1.Start();
                 SecKillAward();
             }
+            else if (comboBox1.SelectedIndex.ToString() == "7")
+            {//门票兑换秒杀
+
+                richTextBox1.AppendText(string.Format("\r\n{0}: 开始门票兑换秒杀...", DateTime.Now.ToString("HH:mm:ss")));
+                //pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
+                timer1.Interval = 10;//提交秒杀频率
+                //timer1.Start();
+                SecKillAward_mp();
+            }
+            else if (comboBox1.SelectedIndex.ToString() == "8")
+            {//话费兑换秒杀
+
+                richTextBox1.AppendText(string.Format("\r\n{0}: 开始话费兑换秒杀...", DateTime.Now.ToString("HH:mm:ss")));
+                //pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
+                timer1.Interval = 5;//提交秒杀频率
+                //timer1.Start();
+                SecKillAward_mp();
+            }
         }
+
         /// <summary>
         /// 暂停定时器
         /// </summary>
@@ -415,13 +497,13 @@ namespace abfwork
         {
             item = new HttpItem()
             {//登录验证
-                URL = "http://utc.pepsi.cn/Account/LoginOn",//URL     必需项    
+                URL = duankou_url + "Account/LoginOn",//URL     必需项    
                 Method = "POST",
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://utc.pepsi.cn/Account/Login",
+                Referer = duankou_url + "Account/Login",
                 Postdata = "phone=" + useName + "&password=" + password ,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -440,13 +522,13 @@ namespace abfwork
         {//获取渴望币金额
             item = new HttpItem()
             {//登录验证
-                URL = "http://utc.pepsi.cn/Account/GetOneDesire_Money",//URL     必需项    
+                URL = duankou_url + "Account/GetOneDesire_Money",//URL     必需项    
                 Method = "GET",//这里与浏览器不一样的*************
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://utc.pepsi.cn/Home/Index",
+                Referer = duankou_url + "Home/Index",
                 //Postdata = "phone=" + useName + "&password=" + password,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -464,13 +546,13 @@ namespace abfwork
         {
             item = new HttpItem()
             {//登录验证
-                URL = "http://utc.pepsi.cn/WinPrize/WinPrizeLog",//URL     必需项    
+                URL = duankou_url + "WinPrize/WinPrizeLog",//URL     必需项    
                 Method = "POST",//这里与浏览器不一样的*************
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://utc.pepsi.cn/WinPrize/WinPrizeIndex",
+                Referer = duankou_url + "WinPrize/WinPrizeIndex",
                 Postdata = "pageindex=1" ,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -480,7 +562,6 @@ namespace abfwork
             resultitem = http.GetHtml(item);
             return resultitem.Html;
         }
-
 
         /// <summary>
         /// 登录查询信息
@@ -527,8 +608,9 @@ namespace abfwork
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
             if (LoginOn(useName, password) == "true")
             {//登录成功
+                
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "渴望币:" + GetOneDesire_Money();//更新结果
+                //dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "渴望币:" + GetOneDesire_Money();//更新结果
                 duihuan_count = 0;//登录时清零
                 if (lgnsuccesscount == 0)
                 {//首次加载图片验证码
@@ -542,11 +624,17 @@ namespace abfwork
                 lgnsuccesscount++;
                 label_lgnsuccess.Text = lgnsuccesscount.ToString();
                 isloginok = true;
+                if (is_huanzh_ok == 1)
+                {
+                    is_huanzh_ok = 0;//复位
+                    duihuan_bt();
+                }
 
             }
             else
             {//登录失败
-                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录失败！", DateTime.Now.ToString("HH:mm:ss"), useName));
+                
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录失败,尝试继续登录...", DateTime.Now.ToString("HH:mm:ss"), useName));
                 dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "登录失败";//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_登录失败.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(aFile);
@@ -556,6 +644,7 @@ namespace abfwork
                 lgnerrcount++;
                 label_lgnerr.Text = lgnerrcount.ToString();
                 isloginok = false;
+                duihuan();//登录失败,继续登录
             }
             
         }
@@ -567,13 +656,13 @@ namespace abfwork
 
             item = new HttpItem()
             {//兑换cdk
-                URL = "http://utc.pepsi.cn/Lottery/Prize",//URL     必需项    
+                URL = duankou_url + "Lottery/Prize",//URL     必需项    
                 Method = "POST",
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://utc.pepsi.cn/Home/Index",
+                Referer = duankou_url + "Home/Index",
                 Postdata = "ticket=" + authenticode + "&code=" + captcha,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -593,7 +682,7 @@ namespace abfwork
             {//渴望币100个
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, "渴望币100个"));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "兑换成功";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "渴望币+100 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "渴望币100个";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_渴望币100个.txt", FileMode.Append, FileAccess.Write);
@@ -608,8 +697,9 @@ namespace abfwork
             {//双人大礼包
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "兑换成功";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "渴望币+100 双人大礼包+1 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "双人大礼包";//更新结果
+                dataGridView2.SelectedRows[0].DefaultCellStyle.BackColor = Color.Red;
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_双人大礼包.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(aFile);
@@ -625,8 +715,9 @@ namespace abfwork
             {//单人迪斯尼
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "兑换成功";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "渴望币+100 单人迪斯尼+1 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "单人迪斯尼";//更新结果
+                dataGridView2.SelectedRows[0].DefaultCellStyle.BackColor = Color.Orange;
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_单人迪斯尼.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(aFile);
@@ -642,8 +733,9 @@ namespace abfwork
             {//3元话费
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "兑换成功";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "渴望币+100 话费+3 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "3元话费";//更新结果
+                dataGridView2.SelectedRows[0].DefaultCellStyle.BackColor = Color.SkyBlue;
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_3元话费.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(aFile);
@@ -659,8 +751,9 @@ namespace abfwork
             {//1元话费
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "兑换成功";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "渴望币+100 话费+1 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "1元话费";//更新结果
+                dataGridView2.SelectedRows[0].DefaultCellStyle.BackColor = Color.SpringGreen;
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_1元话费.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(aFile);
@@ -676,7 +769,7 @@ namespace abfwork
             {//串码输入有误
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "cdk错误";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "cdk错误 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "cdk错误";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_cdk错误.txt", FileMode.Append, FileAccess.Write);
@@ -690,7 +783,7 @@ namespace abfwork
             {//串码已使用
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "cdk已使用";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "cdk已使用 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "cdk已使用";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_cdk已使用.txt", FileMode.Append, FileAccess.Write);
@@ -704,7 +797,7 @@ namespace abfwork
             {//其他错误
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "账号需要休息";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "账号需要休息 ";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_账号需要休息.txt", FileMode.Append, FileAccess.Write);
@@ -714,12 +807,12 @@ namespace abfwork
                 aFile.Close();
                 isbtok = 888;
             }
-            else if(result=="已经达到每日兑换5次的上限咯，明天再来吧！ 如有疑问，请拨打客服热线：4000647746。")
+            else if (result == "已经达到每日兑换5次的上限咯，明天再来吧！ 如有疑问，请拨打客服热线：4000647746。")
             {//兑换5次的上限
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "达到每日兑换上限";//更新结果
-                dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "";//更新结果
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "*达到每日兑换上限*";//更新结果
+                dataGridView2.SelectedRows[0].Cells["ColumnResult"].Value = "*达到每日兑换上限*";//更新结果
                 dataGridView2.SelectedRows[0].Cells["ColumnTime"].Value = DateTime.Now.ToString("HH:mm:ss");//更新结果
                 FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_5次上限.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(aFile);
@@ -727,6 +820,11 @@ namespace abfwork
                 sw.Close();
                 aFile.Close();
                 isbtok = 888;
+            }
+            else 
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result + "\r\n返回错误，尝试继续兑换..."));
+                isbtok = 999;
             }
         }
 
@@ -749,13 +847,13 @@ namespace abfwork
             //开始注册
             item = new HttpItem()
             {//登录验证
-                URL = "http://utc.pepsi.cn/Account/RegisterUserID",//URL     必需项    
+                URL = duankou_url + "Account/RegisterUserID",//URL     必需项    
                 Method = "POST",
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://utc.pepsi.cn/Account/Register",
+                Referer = duankou_url + "Account/Register",
                 Postdata = "phone=" + useName + "&valicode=" + captcha,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -822,13 +920,13 @@ namespace abfwork
 
                 item = new HttpItem()
                 {//兑换cdk
-                    URL = "http://utc.pepsi.cn/WinPrize/PwdChange",//URL     必需项    
+                    URL = duankou_url + "WinPrize/PwdChange",//URL     必需项    
                     Method = "POST",
                     Cookie = cookie,//字符串Cookie     可选项
                     //用户代理设置为手机浏览器
                     UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                     IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                    Referer = "http://utc.pepsi.cn/WinPrize/PwdChangeIndex",
+                    Referer = duankou_url + "WinPrize/PwdChangeIndex",
                     Postdata = "oldPwd=" + password + "&newPwd=" + newPwd,//Post数据     可选项GET时不需要写
                     Timeout = 100000,//连接超时时间     可选项默认为100000    
                     ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -895,13 +993,13 @@ namespace abfwork
 
                 item = new HttpItem()
                 {//兑换cdk
-                    URL = "http://utc.pepsi.cn/Home/CashLotteryExchange",//URL     必需项    
+                    URL = duankou_url + "Home/CashLotteryExchange",//URL     必需项    
                     Method = "POST",
                     Cookie = cookie,//字符串Cookie     可选项
                     //用户代理设置为手机浏览器
                     UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                     IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                    Referer = "http://utc.pepsi.cn/Home/Index",
+                    Referer = duankou_url + "Home/Index",
                     Postdata = "prizeID=" + prizeID,//Post数据     可选项GET时不需要写
                     Timeout = 100000,//连接超时时间     可选项默认为100000    
                     ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -1032,7 +1130,7 @@ namespace abfwork
                 HttpHelper http = new HttpHelper();
                 HttpItem itemGet = new HttpItem()
                 {
-                    URL = "http://utc.pepsi.cn/SecurityCode/SecKillCode",//URL     必需项    
+                    URL = duankou_url + "SecurityCode/SecKillCode",//URL     必需项    
                     Method = "get",
                     Cookie = cookie,//字符串Cookie     可选项
                     //用户代理设置为手机浏览器
@@ -1058,13 +1156,13 @@ namespace abfwork
         { //秒杀提交
             item = new HttpItem()
             {//兑换cdk
-                URL = "http://utc.pepsi.cn/Activity/SecKillAward",//URL     必需项    
+                URL = duankou_url + "Activity/SecKillAward",//URL     必需项    
                 Method = "POST",
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://utc.pepsi.cn/Home/Index",
+                Referer = duankou_url + "Home/Index",
                 Postdata = "code=" + captcha,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -1072,9 +1170,124 @@ namespace abfwork
             };
             resultitem = http.GetHtml(item);
             string result = resultitem.Html;
-            if (result == "1")
+            if (result == "0" || result == "1")
                 timer1.Stop();
             richTextBox1.AppendText(string.Format("\r\n{0}: {1} - {2}", DateTime.Now.ToString("HH:mm:ss"), useName,result));
+        }
+
+        /// <summary>
+        /// 手机端兑换门票秒杀
+        /// </summary>
+        private void SecKillAward_mp()
+        { 
+            useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
+            password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
+            item = new HttpItem()
+            {//登录验证
+                URL = duankou_url + "Account/LoginOn",//URL     必需项    
+                Method = "POST",
+                Cookie = cookie,//字符串Cookie     可选项
+                //用户代理设置为手机浏览器
+                UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
+                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                Referer = duankou_url + "Account/Login",
+                Postdata = "phone=" + useName + "&password=" + password,//Post数据     可选项GET时不需要写
+                Timeout = 100000,//连接超时时间     可选项默认为100000    
+                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
+            };
+
+            resultitem = http.GetHtml(item);
+            if (resultitem.Html == "true")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
+                timer1.Start();
+                //SecKillAward_mp_bt();
+            }
+        }
+
+        private void SecKillAward_mp_bt(string prizeID)
+        {
+            item = new HttpItem()
+            {//兑换cdk
+                URL = duankou_url + "CrowdFunding/CashLotteryExchange",//URL     必需项    
+                Method = "POST",
+                Cookie = cookie,//字符串Cookie     可选项
+                //用户代理设置为手机浏览器
+                UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
+                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                Referer = duankou_url + "CrowdFunding/CashLottery",
+                Postdata = "prizeID=" + prizeID,//Post数据     可选项GET时不需要写
+                Timeout = 100000,//连接超时时间     可选项默认为100000    
+                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
+            };
+            resultitem = http.GetHtml(item);
+            string result = resultitem.Html;
+            if (result == "")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 登录失败！", DateTime.Now.ToString("HH:mm:ss")));
+                timer1.Stop();
+            }
+            else if (result == "-1")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 渴望币不足", DateTime.Now.ToString("HH:mm:ss")));
+                isbtok = -1;
+                //timer1.Stop();
+            }
+            else if (result == "-2")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 你参加活动的总次数已经超过50次，不能继续参加", DateTime.Now.ToString("HH:mm:ss")));
+                isbtok = -2;
+                //timer1.Stop();
+            }
+            else if (result == "-3")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 今日您已参与过5次活动，把机会留给其他小伙伴吧", DateTime.Now.ToString("HH:mm:ss")));
+                isbtok = -3;
+                //timer1.Stop();
+            }
+            else if (result == "-4")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 今日已全部兑换完，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
+                //timer1.Stop();
+            }
+            else if (result == "-5")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 该手机号1个月话费中奖上限超过20次", DateTime.Now.ToString("HH:mm:ss")));
+                //timer1.Stop();
+                isbtok = -5;
+            }
+            else if (result == "-6")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 今日已兑换过，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
+                isbtok = -6;
+                //timer1.Stop();
+            }
+            else if (result == "-7")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 网络异常", DateTime.Now.ToString("HH:mm:ss")));
+                //timer1.Stop();
+            }
+            else if (result == "-8")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 该门票的入园日期已经选择", DateTime.Now.ToString("HH:mm:ss")));
+                //timer1.Stop();
+            }
+            else
+            {
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "兑换成功:" + result;//更新结果
+                richTextBox1.AppendText(string.Format("\r\n{0}: 兑换成功！", DateTime.Now.ToString("HH:mm:ss")));
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"),result));
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换门票_成功.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----兑换门票_成功----" + result + "----" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                duihuan_count++;
+                isbtok = 7;
+                //timer1.Stop();
+            }
         }
 
         /*
@@ -1183,7 +1396,7 @@ namespace abfwork
             HttpHelper http = new HttpHelper();
             HttpItem itemGet = new HttpItem()
             {
-                URL = "http://utc.pepsi.cn/SecurityCode/Code",//URL     必需项    
+                URL = duankou_url + "SecurityCode/Code",//URL     必需项    
                 Method = "get",
                 Cookie = cookie,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
@@ -1506,8 +1719,9 @@ namespace abfwork
             {//兑换cdk
                 if (duihuan_count.ToString() == textBox_duihuancishu.Text.ToString() || isbtok == 888)
                 { //换账号&cdk
-                    if (isbtok != 888)
+                    if (isbtok != 888 && isloginok == true && (isbtok >= 1 && isbtok <= 7) )
                     {
+                        isbtok = 0;//复位
                         if (++numIndexOfDatagridview2Row == dataGridView2.RowCount)
                         {
                             timer1.Stop();
@@ -1522,9 +1736,10 @@ namespace abfwork
                                 dataGridView2.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview2Row - 10;//滑块位置更新
 
                         }
+                    
                     }
                     isloginok=false;//复位
-                    isbtok = 0;//复位
+                    //isbtok = 0;//复位
                     if (++numIndexOfDatagridview1Row == dataGridView1.RowCount )
                     {
                         timer1.Stop();
@@ -1539,13 +1754,11 @@ namespace abfwork
                             dataGridView1.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview1Row - 10;//滑块位置更新
 
                     }
-                    
+                    is_huanzh_ok = 1;
                     duihuan();
-                    duihuan_bt();
-
                 }
-                else if (isloginok == true && isbtok >=1 && isbtok <=7)
-                {//换下一个cdk
+                else if (isloginok == true && (isbtok >=1 && isbtok <=7) )
+                {//只用换cdk
                     isbtok = 0;//复位
                     if (++numIndexOfDatagridview2Row == dataGridView2.RowCount)
                     {
@@ -1561,6 +1774,11 @@ namespace abfwork
                             dataGridView2.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview2Row - 10;//滑块位置更新
 
                     }
+                    duihuan_bt();
+                }
+                else if (isloginok == true && isbtok == 999)
+                {//服务器错误 ，休息一下 继续
+                    isbtok = 0;//复位
                     duihuan_bt();
                 }
 
@@ -1644,15 +1862,23 @@ namespace abfwork
                 //CashLotteryExchange();
             }
 
-            else if (comboBox1.SelectedIndex.ToString() == "6" && isbtok != 0)
+            else if (comboBox1.SelectedIndex.ToString() == "6")
             {//秒杀
                 SecKillAward_bt();
+            }
+            else if (comboBox1.SelectedIndex.ToString() == "7")
+            {//门票兑换秒杀
+                SecKillAward_mp_bt("10");
+            }
+            else if (comboBox1.SelectedIndex.ToString() == "8")
+            {//话费兑换秒杀
+                SecKillAward_mp_bt("11");
             }
         }
 
         private void textBox_yzm_TextChanged(object sender, EventArgs e)
         {
-            if (textBox_yzm.Text.Length == 5  && checkBox_uu.Checked==false && is_yzm_TextChanged==0)
+            if (textBox_yzm.Text.Length == 4  && checkBox_uu.Checked==false && is_yzm_TextChanged==0)
             {
                 is_yzm_TextChanged = 1;
                 captcha = textBox_yzm.Text;
@@ -1665,6 +1891,11 @@ namespace abfwork
                 {
                     RegisterUserID();
                 
+                }
+                else if (comboBox1.SelectedIndex.ToString() == "6")
+                {
+                    timer1.Start();
+
                 }
             }
         }
@@ -1717,6 +1948,85 @@ namespace abfwork
             }
         }
 
+        /// <summary>
+        /// 通过注册表获取宽带连接名称 win7已测试
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetAllAdslNameByKey()
+        {
+            RegistryKey userKey = Registry.CurrentUser;
+            RegistryKey key = userKey.OpenSubKey(@"RemoteAccess\Profile");
+            return key.GetSubKeyNames();//获取当前创建的adsl宽带列表
+        }
+
+        private void comboBox_kd_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            showAttr();//自动更新宽带连接信息
+        }
+
+        /// <summary>
+        /// 宽带断线
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_kdbh_Click(object sender, EventArgs e)
+        {
+            string str;
+            ras.HangUp(out str);
+
+        }
+
+        /// <summary>
+        /// 宽带重拨
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_kdcb_Click(object sender, EventArgs e)
+        {
+            string str;
+            ras.DialUp((string)comboBox1.SelectedItem, out str);
+        }
+
+        /// <summary>
+        /// 协议端口选择
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox_url_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(comboBox_url.SelectedIndex.ToString()=="0")
+            {
+                duankou_url = "http://2016utc.pepsi.cn/";
+                comboBox_url.ForeColor = Color.Blue;
+            }
+            else if (comboBox_url.SelectedIndex.ToString() == "1")
+            {
+                duankou_url = "http://utc.pepsi.cn/";
+                comboBox_url.ForeColor = Color.YellowGreen;
+            }
+        }
+
+        /// <summary>
+        /// 主操作变更事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(comboBox1.SelectedIndex.ToString()=="0")
+            {//查询信息使用电脑web端口
+                comboBox_url.SelectedIndex = 1;
+            }
+            else if(comboBox1.SelectedIndex.ToString() == "1")
+            {//兑换使用手机wap端口
+                comboBox_url.SelectedIndex = 0;
+            }
+            else if (comboBox1.SelectedIndex.ToString() == "4" || comboBox1.SelectedIndex.ToString() == "4")
+            {
+                comboBox2.SelectedIndex = 1;
+                comboBox2.ForeColor = Color.Blue;
+            }
+        }
 
     }
 }
