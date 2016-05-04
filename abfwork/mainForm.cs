@@ -38,7 +38,7 @@ namespace abfwork
         private Ras ras;//宽带拨号
 
         string duankou_url = "";
-
+        int yzm_weishu = 4;
         string prizeID = "00";//价值类别
         string freedrink_cnt = "0";//免喝数量
         int is_yzm_TextChanged = 0;//是否触发
@@ -433,7 +433,7 @@ namespace abfwork
                     return;
                 }
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始渴望币兑换...", DateTime.Now.ToString("HH:mm:ss")));
-                pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
+                
                 timer1.Start();
                 CashLotteryExchange();
             }
@@ -446,37 +446,18 @@ namespace abfwork
                     return;
                 }
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始渴望币抽奖...", DateTime.Now.ToString("HH:mm:ss")));
-                pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
                 timer1.Start();
-                //PwdChange();
+                CashLotteryExchange();
             }
             else if (comboBox1.SelectedIndex.ToString() == "6")
             {//秒杀
 
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始秒杀...", DateTime.Now.ToString("HH:mm:ss")));
-                pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
-                timer1.Interval = 10;//提交秒杀频率
+                timer1.Interval = 50;//提交秒杀频率
                 //timer1.Start();
                 SecKillAward();
             }
-            else if (comboBox1.SelectedIndex.ToString() == "7")
-            {//门票兑换秒杀
-
-                richTextBox1.AppendText(string.Format("\r\n{0}: 开始门票兑换秒杀...", DateTime.Now.ToString("HH:mm:ss")));
-                //pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
-                timer1.Interval = 10;//提交秒杀频率
-                //timer1.Start();
-                SecKillAward_mp();
-            }
-            else if (comboBox1.SelectedIndex.ToString() == "8")
-            {//话费兑换秒杀
-
-                richTextBox1.AppendText(string.Format("\r\n{0}: 开始话费兑换秒杀...", DateTime.Now.ToString("HH:mm:ss")));
-                //pwd_weishu = Int32.Parse(textBox_pwd_weishu.Text);
-                timer1.Interval = 5;//提交秒杀频率
-                //timer1.Start();
-                SecKillAward_mp();
-            }
+            
         }
 
         /// <summary>
@@ -636,13 +617,6 @@ namespace abfwork
                 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录失败,尝试继续登录...", DateTime.Now.ToString("HH:mm:ss"), useName));
                 dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "登录失败";//更新结果
-                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换cdk_登录失败.txt", FileMode.Append, FileAccess.Write);
-                StreamWriter sw = new StreamWriter(aFile);
-                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                sw.Close();
-                aFile.Close();
-                lgnerrcount++;
-                label_lgnerr.Text = lgnerrcount.ToString();
                 isloginok = false;
                 duihuan();//登录失败,继续登录
             }
@@ -981,139 +955,166 @@ namespace abfwork
         }
 
         /// <summary>
-        /// 渴望币兑换
+        /// 渴望币兑换-登录
         /// </summary>
         private void CashLotteryExchange()
         {
             useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
-            string result2 = LoginOn(useName, password);
-            if (result2 == "true")
-            {//
-
-                item = new HttpItem()
-                {//兑换cdk
-                    URL = duankou_url + "Home/CashLotteryExchange",//URL     必需项    
-                    Method = "POST",
-                    Cookie = cookie,//字符串Cookie     可选项
-                    //用户代理设置为手机浏览器
-                    UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
-                    IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                    Referer = duankou_url + "Home/Index",
-                    Postdata = "prizeID=" + prizeID,//Post数据     可选项GET时不需要写
-                    Timeout = 100000,//连接超时时间     可选项默认为100000    
-                    ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
-                    ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
-                };
-                resultitem = http.GetHtml(item);
-                string result = resultitem.Html;
-                if (result == "")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 请重新登录", DateTime.Now.ToString("HH:mm:ss")));
-                    isbtok = 88;
-                }
-                else if (result == "-1")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 渴望币不足", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "渴望币不足";//更新结果
-                    FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_渴望币不足.txt", FileMode.Append, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(aFile);
-                    sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                    sw.Close();
-                    aFile.Close();
-                    lgnsuccesscount++;
-                    label_lgnsuccess.Text = lgnsuccesscount.ToString();
-                    isbtok = -1;
-                }
-                else if (result == "-2")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 你参加活动的总次数已经超过50次，不能继续参加", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "你参加活动的总次数已经超过50次，不能继续参加";//更新结果
-                    FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_超过50次.txt", FileMode.Append, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(aFile);
-                    sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                    sw.Close();
-                    aFile.Close();
-                    lgnsuccesscount++;
-                    label_lgnsuccess.Text = lgnsuccesscount.ToString();
-                    isbtok = -2;
-                }
-                else if (result == "-3")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 今日您已参与过5次活动，把机会留给其他小伙伴吧", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "今日您已参与过5次活动，把机会留给其他小伙伴吧";//更新结果
-                    FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_已参与过5次活动.txt", FileMode.Append, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(aFile);
-                    sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                    sw.Close();
-                    aFile.Close();
-                    lgnsuccesscount++;
-                    label_lgnsuccess.Text = lgnsuccesscount.ToString();
-                    isbtok = -3;
-                }
-                else if (result == "-4")
-                {
-                    timer1.Stop();//兑换停止
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 今日已全部兑换完，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "今日已全部兑换完，请明日再来";//更新结果
-
-                    isbtok = -4;
-                }
-                else if (result == "-5")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 该手机号1个月话费中奖上限超过20次", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "该手机号1个月话费中奖上限超过20次";//更新结果
-                    FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_该手机号1个月话费中奖上限超过20次.txt", FileMode.Append, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(aFile);
-                    sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                    sw.Close();
-                    aFile.Close();
-                    lgnsuccesscount++;
-                    label_lgnsuccess.Text = lgnsuccesscount.ToString();
-                    isbtok = -5;
-                }
-                else if (result == "-6")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 今日已兑换过，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "今日已兑换过，请明日再来";//更新结果
-                    FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_今日已兑换过.txt", FileMode.Append, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(aFile);
-                    sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                    sw.Close();
-                    aFile.Close();
-                    lgnsuccesscount++;
-                    label_lgnsuccess.Text = lgnsuccesscount.ToString();
-                    isbtok = -6;
-                }
-                else if (result == "-7")
-                {
-                    richTextBox1.AppendText(string.Format("\r\n{0}: 网络异常", DateTime.Now.ToString("HH:mm:ss")));
-                    dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "网络异常";//更新结果
-                    FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_网络异常.txt", FileMode.Append, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(aFile);
-                    sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                    sw.Close();
-                    aFile.Close();
-                    lgnsuccesscount++;
-                    label_lgnsuccess.Text = lgnsuccesscount.ToString();
-                    isbtok = -7;
-                }
+            string result = LoginOn(useName, password);
+            if (result == "true")
+            {//登录成功
+                isloginok = true;
+                CashLotteryExchange_bt(prizeID);
             }
-            else if (result2 == "false")
+            else if (result == "false")
             {//登录失败
-                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录失败！", DateTime.Now.ToString("HH:mm:ss"), useName));
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录失败,尝试继续登录...", DateTime.Now.ToString("HH:mm:ss"), useName));
                 dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "登录失败";//更新结果
-                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "查询账号信息_登录失败.txt", FileMode.Append, FileAccess.Write);
-                StreamWriter sw = new StreamWriter(aFile);
-                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
-                sw.Close();
-                aFile.Close();
-                lgnerrcount++;
-                label_lgnerr.Text = lgnerrcount.ToString();
+                isloginok = false;
+                CashLotteryExchange();//登录失败,继续登录
             }
 
 
             
+        }
+
+        /// <summary>
+        /// 渴望币兑换-提交
+        /// </summary>
+        /// <param name="prizeID">子选项</param>
+        private void CashLotteryExchange_bt(string prizeID)
+        {
+            item = new HttpItem()
+            {//兑换cdk
+                URL = duankou_url + "Home/CashLotteryExchange",//URL     必需项    
+                Method = "POST",
+                Cookie = cookie,//字符串Cookie     可选项
+                //用户代理设置为手机浏览器
+                UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
+                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                Referer = duankou_url + "Home/Index",
+                Postdata = "prizeID=" + prizeID,//Post数据     可选项GET时不需要写
+                Timeout = 100000,//连接超时时间     可选项默认为100000    
+                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
+            };
+            resultitem = http.GetHtml(item);
+            string result = resultitem.Html;
+            if (result == "")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 请重新登录", DateTime.Now.ToString("HH:mm:ss")));
+                isbtok = 88;
+            }
+            else if (result == "-1")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 渴望币不足", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "渴望币不足";//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_渴望币不足.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = -1;
+            }
+            else if (result == "-2")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 你参加活动的总次数已经超过50次，不能继续参加", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "你参加活动的总次数已经超过50次，不能继续参加";//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_超过50次.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = -2;
+            }
+            else if (result == "-3")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 今日您已参与过5次活动，把机会留给其他小伙伴吧", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "今日您已参与过5次活动，把机会留给其他小伙伴吧";//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_已参与过5次活动.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = -3;
+            }
+            else if (result == "-4")
+            {
+                timer1.Stop();//兑换停止
+                richTextBox1.AppendText(string.Format("\r\n{0}: 今日已全部兑换完，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "今日已全部兑换完，请明日再来";//更新结果
+
+                isbtok = -4;
+            }
+            else if (result == "-5")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 该手机号1个月话费中奖上限超过20次", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "该手机号1个月话费中奖上限超过20次";//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_该手机号1个月话费中奖上限超过20次.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = -5;
+            }
+            else if (result == "-6")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 今日已兑换过，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "今日已兑换过，请明日再来";//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_今日已兑换过.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = -6;
+            }
+            else if (result == "-7")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: 网络异常", DateTime.Now.ToString("HH:mm:ss")));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "网络异常";//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_网络异常.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = -7;
+            }
+            else
+            {
+                string type_t = "";
+                if(prizeID == "10")
+                {
+                    type_t = "迪士尼门票";
+                }
+                else if(prizeID=="11")
+                {
+                    type_t="1元话费";
+                }
+                richTextBox1.AppendText(string.Format("\r\n{0}: 兑换成功 返回：{1}", DateTime.Now.ToString("HH:mm:ss"),result));
+                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value = "兑换成功:"+result;//更新结果
+                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "渴望币兑换_兑换成功.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(aFile);
+                sw.WriteLine(useName + "----" + password + "----" + type_t + "返回：" + result + "----" + DateTime.Now.ToString("HH:mm:ss"));
+                sw.Close();
+                aFile.Close();
+                lgnsuccesscount++;
+                label_lgnsuccess.Text = lgnsuccesscount.ToString();
+                isbtok = 8;
+            }
+
         }
 
         /// <summary>
@@ -1152,6 +1153,9 @@ namespace abfwork
             }
         }
 
+        /// <summary>
+        /// 秒杀提交
+        /// </summary>
         private void SecKillAward_bt()
         { //秒杀提交
             item = new HttpItem()
@@ -1173,121 +1177,6 @@ namespace abfwork
             if (result == "0" || result == "1")
                 timer1.Stop();
             richTextBox1.AppendText(string.Format("\r\n{0}: {1} - {2}", DateTime.Now.ToString("HH:mm:ss"), useName,result));
-        }
-
-        /// <summary>
-        /// 手机端兑换门票秒杀
-        /// </summary>
-        private void SecKillAward_mp()
-        { 
-            useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
-            password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
-            item = new HttpItem()
-            {//登录验证
-                URL = duankou_url + "Account/LoginOn",//URL     必需项    
-                Method = "POST",
-                Cookie = cookie,//字符串Cookie     可选项
-                //用户代理设置为手机浏览器
-                UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
-                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = duankou_url + "Account/Login",
-                Postdata = "phone=" + useName + "&password=" + password,//Post数据     可选项GET时不需要写
-                Timeout = 100000,//连接超时时间     可选项默认为100000    
-                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
-                ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
-            };
-
-            resultitem = http.GetHtml(item);
-            if (resultitem.Html == "true")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
-                timer1.Start();
-                //SecKillAward_mp_bt();
-            }
-        }
-
-        private void SecKillAward_mp_bt(string prizeID)
-        {
-            item = new HttpItem()
-            {//兑换cdk
-                URL = duankou_url + "CrowdFunding/CashLotteryExchange",//URL     必需项    
-                Method = "POST",
-                Cookie = cookie,//字符串Cookie     可选项
-                //用户代理设置为手机浏览器
-                UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
-                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = duankou_url + "CrowdFunding/CashLottery",
-                Postdata = "prizeID=" + prizeID,//Post数据     可选项GET时不需要写
-                Timeout = 100000,//连接超时时间     可选项默认为100000    
-                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
-                ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
-            };
-            resultitem = http.GetHtml(item);
-            string result = resultitem.Html;
-            if (result == "")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 登录失败！", DateTime.Now.ToString("HH:mm:ss")));
-                timer1.Stop();
-            }
-            else if (result == "-1")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 渴望币不足", DateTime.Now.ToString("HH:mm:ss")));
-                isbtok = -1;
-                //timer1.Stop();
-            }
-            else if (result == "-2")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 你参加活动的总次数已经超过50次，不能继续参加", DateTime.Now.ToString("HH:mm:ss")));
-                isbtok = -2;
-                //timer1.Stop();
-            }
-            else if (result == "-3")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 今日您已参与过5次活动，把机会留给其他小伙伴吧", DateTime.Now.ToString("HH:mm:ss")));
-                isbtok = -3;
-                //timer1.Stop();
-            }
-            else if (result == "-4")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 今日已全部兑换完，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
-                //timer1.Stop();
-            }
-            else if (result == "-5")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 该手机号1个月话费中奖上限超过20次", DateTime.Now.ToString("HH:mm:ss")));
-                //timer1.Stop();
-                isbtok = -5;
-            }
-            else if (result == "-6")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 今日已兑换过，请明日再来", DateTime.Now.ToString("HH:mm:ss")));
-                isbtok = -6;
-                //timer1.Stop();
-            }
-            else if (result == "-7")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 网络异常", DateTime.Now.ToString("HH:mm:ss")));
-                //timer1.Stop();
-            }
-            else if (result == "-8")
-            {
-                richTextBox1.AppendText(string.Format("\r\n{0}: 该门票的入园日期已经选择", DateTime.Now.ToString("HH:mm:ss")));
-                //timer1.Stop();
-            }
-            else
-            {
-                dataGridView1.SelectedRows[0].Cells["ColumnStatus"].Value += "兑换成功:" + result;//更新结果
-                richTextBox1.AppendText(string.Format("\r\n{0}: 兑换成功！", DateTime.Now.ToString("HH:mm:ss")));
-                richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"),result));
-                FileStream aFile = new FileStream(logdir + "\\" + DateTime.Now.ToString("yyyyMMdd") + "兑换门票_成功.txt", FileMode.Append, FileAccess.Write);
-                StreamWriter sw = new StreamWriter(aFile);
-                sw.WriteLine(useName + "----" + password + "----兑换门票_成功----" + result + "----" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss"));
-                sw.Close();
-                aFile.Close();
-                duihuan_count++;
-                isbtok = 7;
-                //timer1.Stop();
-            }
         }
 
         /*
@@ -1866,19 +1755,11 @@ namespace abfwork
             {//秒杀
                 SecKillAward_bt();
             }
-            else if (comboBox1.SelectedIndex.ToString() == "7")
-            {//门票兑换秒杀
-                SecKillAward_mp_bt("10");
-            }
-            else if (comboBox1.SelectedIndex.ToString() == "8")
-            {//话费兑换秒杀
-                SecKillAward_mp_bt("11");
-            }
         }
 
         private void textBox_yzm_TextChanged(object sender, EventArgs e)
         {
-            if (textBox_yzm.Text.Length == 4  && checkBox_uu.Checked==false && is_yzm_TextChanged==0)
+            if (textBox_yzm.Text.Length == yzm_weishu  && checkBox_uu.Checked==false && is_yzm_TextChanged==0)
             {
                 is_yzm_TextChanged = 1;
                 captcha = textBox_yzm.Text;
@@ -1929,6 +1810,7 @@ namespace abfwork
             else if (comboBox2.SelectedIndex.ToString() == "1" && comboBox1.SelectedIndex.ToString() == "4")
             {//兑换-门票
                 prizeID = "1";
+                comboBox2.ForeColor = Color.Red;
             }
             else if (comboBox2.SelectedIndex.ToString() == "2" && comboBox1.SelectedIndex.ToString() == "5")
             {//抽奖-旅游卡
@@ -1998,11 +1880,19 @@ namespace abfwork
             {
                 duankou_url = "http://2016utc.pepsi.cn/";
                 comboBox_url.ForeColor = Color.Blue;
+                yzm_weishu = 4;
             }
             else if (comboBox_url.SelectedIndex.ToString() == "1")
             {
                 duankou_url = "http://utc.pepsi.cn/";
                 comboBox_url.ForeColor = Color.YellowGreen;
+                yzm_weishu = 5;
+            }
+            else if (comboBox_url.SelectedIndex.ToString() == "6")
+            {//秒杀验证码4位
+                duankou_url = "http://utc.pepsi.cn/";
+                comboBox_url.ForeColor = Color.YellowGreen;
+                yzm_weishu = 4;
             }
         }
 
@@ -2024,7 +1914,7 @@ namespace abfwork
             else if (comboBox1.SelectedIndex.ToString() == "4" || comboBox1.SelectedIndex.ToString() == "4")
             {
                 comboBox2.SelectedIndex = 1;
-                comboBox2.ForeColor = Color.Blue;
+                
             }
         }
 

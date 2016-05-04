@@ -55,6 +55,8 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label18 = new System.Windows.Forms.Label();
+            this.comboBox_url = new System.Windows.Forms.ComboBox();
             this.textBox_duihuancishu = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.textBox_yc = new System.Windows.Forms.TextBox();
@@ -92,8 +94,6 @@
             this.ColumnPwd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.comboBox_url = new System.Windows.Forms.ComboBox();
-            this.label18 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -158,12 +158,12 @@
             // 
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
-            "兑换-1元话费",
-            "兑换-门票",
-            "抽奖-旅游卡",
-            "抽奖-电容笔",
-            "抽奖-时尚耳机",
-            "抽奖-运动摄像机"});
+            "600币兑换1元话费",
+            "10000币兑换门票",
+            "100币抽旅游卡",
+            "100币抽电容笔",
+            "100币抽时尚耳机",
+            "100币抽运动摄像机"});
             this.comboBox2.Location = new System.Drawing.Point(65, 59);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(124, 20);
@@ -246,9 +246,7 @@
             "修改密码",
             "渴望币兑换",
             "渴望币抽奖",
-            "秒杀",
-            "兑换秒杀10",
-            "兑换秒杀11"});
+            "秒杀"});
             this.comboBox1.Location = new System.Drawing.Point(65, 30);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(124, 20);
@@ -384,9 +382,30 @@
             this.tabPage3.Text = "基本选项";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 54);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(89, 12);
+            this.label18.TabIndex = 9;
+            this.label18.Text = "http协议端口：";
+            // 
+            // comboBox_url
+            // 
+            this.comboBox_url.FormattingEnabled = true;
+            this.comboBox_url.Items.AddRange(new object[] {
+            "手机wap",
+            "电脑web"});
+            this.comboBox_url.Location = new System.Drawing.Point(101, 51);
+            this.comboBox_url.Name = "comboBox_url";
+            this.comboBox_url.Size = new System.Drawing.Size(77, 20);
+            this.comboBox_url.TabIndex = 8;
+            this.comboBox_url.SelectedIndexChanged += new System.EventHandler(this.comboBox_url_SelectedIndexChanged);
+            // 
             // textBox_duihuancishu
             // 
-            this.textBox_duihuancishu.Location = new System.Drawing.Point(89, 17);
+            this.textBox_duihuancishu.Location = new System.Drawing.Point(101, 17);
             this.textBox_duihuancishu.Name = "textBox_duihuancishu";
             this.textBox_duihuancishu.Size = new System.Drawing.Size(77, 21);
             this.textBox_duihuancishu.TabIndex = 7;
@@ -403,9 +422,9 @@
             // 
             // textBox_yc
             // 
-            this.textBox_yc.Location = new System.Drawing.Point(102, 146);
+            this.textBox_yc.Location = new System.Drawing.Point(101, 146);
             this.textBox_yc.Name = "textBox_yc";
-            this.textBox_yc.Size = new System.Drawing.Size(64, 21);
+            this.textBox_yc.Size = new System.Drawing.Size(77, 21);
             this.textBox_yc.TabIndex = 3;
             this.textBox_yc.Text = "3000";
             this.textBox_yc.TextChanged += new System.EventHandler(this.textBox_yc_TextChanged);
@@ -415,9 +434,9 @@
             this.label_yc.AutoSize = true;
             this.label_yc.Location = new System.Drawing.Point(6, 149);
             this.label_yc.Name = "label_yc";
-            this.label_yc.Size = new System.Drawing.Size(95, 12);
+            this.label_yc.Size = new System.Drawing.Size(101, 12);
             this.label_yc.TabIndex = 2;
-            this.label_yc.Text = "操作延迟(毫秒):";
+            this.label_yc.Text = "操作延迟(毫秒)：";
             // 
             // tabPage1
             // 
@@ -770,27 +789,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // comboBox_url
-            // 
-            this.comboBox_url.FormattingEnabled = true;
-            this.comboBox_url.Items.AddRange(new object[] {
-            "手机wap",
-            "电脑web"});
-            this.comboBox_url.Location = new System.Drawing.Point(89, 51);
-            this.comboBox_url.Name = "comboBox_url";
-            this.comboBox_url.Size = new System.Drawing.Size(77, 20);
-            this.comboBox_url.TabIndex = 8;
-            this.comboBox_url.SelectedIndexChanged += new System.EventHandler(this.comboBox_url_SelectedIndexChanged);
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 54);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(65, 12);
-            this.label18.TabIndex = 9;
-            this.label18.Text = "协议端口：";
             // 
             // mainForm
             // 
