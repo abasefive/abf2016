@@ -37,6 +37,12 @@ namespace abfwork
 
         private Ras ras;//宽带拨号
 
+        int pinglv = 0;//定时兑换频率
+        int pinglv_t = 0;//定时兑换频率
+
+        int num_ds = 0;//定时兑换设定数量
+        int num_ds_t = 0;
+
         string duankou_url = "";
         int yzm_weishu = 4;
         string prizeID = "00";//价值类别
@@ -149,6 +155,7 @@ namespace abfwork
             this.comboBox1.SelectedIndex = 1;
             this.comboBox_url.SelectedIndex = 0;
             duankou_url = "http://2016utc.pepsi.cn/";
+            timer2.Start();
         }
 
         /// <summary>
@@ -170,6 +177,9 @@ namespace abfwork
             //comboBox_kd.SelectedIndex = 0;
 
             //showAttr();
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
+            sp.SoundLocation = "sound/go.wav";
+            sp.Play();
         }
 
         /// <summary>
@@ -385,6 +395,7 @@ namespace abfwork
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
+            
             yanchi = textBox_yc.Text;
             if (dataGridView1.RowCount == 0)
             {
@@ -457,7 +468,7 @@ namespace abfwork
                 //timer1.Start();
                 SecKillAward();
             }
-            
+            button1.Enabled = false;
         }
 
         /// <summary>
@@ -467,8 +478,18 @@ namespace abfwork
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-            timer1.Stop();
-            richTextBox1.AppendText(string.Format("\r\n{0}: 定时器停止,程序暂停！", DateTime.Now.ToString("HH:mm:ss")));
+            if (button2.Text == "暂停")
+            {
+                timer1.Stop();
+                richTextBox1.AppendText(string.Format("\r\n{0}: 程序暂停！", DateTime.Now.ToString("HH:mm:ss")));
+                button2.Text = "继续";
+            }
+            else if (button2.Text == "继续")
+            {
+                timer1.Start();
+                richTextBox1.AppendText(string.Format("\r\n{0}: 程序继续...", DateTime.Now.ToString("HH:mm:ss")));
+                button2.Text = "暂停";
+            }
         }
 
         /// <summary>
@@ -608,6 +629,7 @@ namespace abfwork
                 if (is_huanzh_ok == 1)
                 {
                     is_huanzh_ok = 0;//复位
+
                     duihuan_bt();
                 }
 
@@ -625,9 +647,10 @@ namespace abfwork
 
         private void duihuan_bt()
         {
+
             // -----------------兑换开始------------------
             authenticode = dataGridView2.SelectedRows[0].Cells["ColumnCDK"].Value.ToString();
-
+            //HttpHelper http = new HttpHelper();
             item = new HttpItem()
             {//兑换cdk
                 URL = duankou_url + "Lottery/Prize",//URL     必需项    
@@ -636,10 +659,10 @@ namespace abfwork
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = duankou_url + "Home/Index",
+                Referer = duankou_url + "Lottery/Index",
                 Postdata = "ticket=" + authenticode + "&code=" + captcha,//Post数据     可选项GET时不需要写
-                Timeout = 100000,//连接超时时间     可选项默认为100000    
-                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                //Timeout = 100000,//连接超时时间     可选项默认为100000    
+                //ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
                 ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
             };
             resultitem = http.GetHtml(item);
@@ -684,6 +707,10 @@ namespace abfwork
                 label_lgnsuccess.Text = lgnsuccesscount.ToString();
                 duihuan_count++;
                 isbtok = 1;
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
+                sp.SoundLocation = "sound/1.wav";
+                sp.Play();
+
             }
             else if (result == "2")
             {//单人迪斯尼
@@ -702,6 +729,9 @@ namespace abfwork
                 label_lgnsuccess.Text = lgnsuccesscount.ToString();
                 duihuan_count++;
                 isbtok = 2;
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
+                sp.SoundLocation = "sound/1.wav";
+                sp.Play();
             }
             else if (result == "3")
             {//3元话费
@@ -720,6 +750,9 @@ namespace abfwork
                 label_lgnsuccess.Text = lgnsuccesscount.ToString();
                 duihuan_count++;
                 isbtok = 3;
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
+                sp.SoundLocation = "sound/2.wav";
+                sp.Play();
             }
             else if (result == "4")
             {//1元话费
@@ -738,6 +771,9 @@ namespace abfwork
                 label_lgnsuccess.Text = lgnsuccesscount.ToString();
                 duihuan_count++;
                 isbtok = 4;
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
+                sp.SoundLocation = "sound/2.wav";
+                sp.Play();
             }
             else if (result == "串码输入有误哦，请再仔细核对下重新输入，如有疑问，请拨打客服热线：4000647746。" || result=="串码输入有误。咨询热线：4000647746")
             {//串码输入有误
@@ -800,7 +836,9 @@ namespace abfwork
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result + "\r\n返回错误，尝试继续兑换..."));
                 isbtok = 999;
             }
+            
         }
+
 
         /// <summary>
         /// 注册账号
@@ -959,6 +997,7 @@ namespace abfwork
         /// </summary>
         private void CashLotteryExchange()
         {
+            richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功", DateTime.Now.ToString("HH:mm:ss"), useName));
             useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
             string result = LoginOn(useName, password);
@@ -1137,7 +1176,7 @@ namespace abfwork
                     //用户代理设置为手机浏览器
                     UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                     IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                    Referer = "http://www.ksfteasp.com/WAP/Register.html",
+                    Referer = duankou_url + "Home/Index",
                     //Postdata = "&oldvalue=" + captcha,//Post数据     可选项GET时不需要写
                     Timeout = 100000,//连接超时时间     可选项默认为100000    
                     ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
@@ -1145,11 +1184,8 @@ namespace abfwork
                 };
                 pictureBox1.Image = http.GetImage(itemGet);//加载秒杀验证码
 
-                captcha = textBox_yzm.Text;
-
-                if (captcha != "")
-                    isbtok = 1;
-
+                textBox_yzm.Text="";
+                is_yzm_TextChanged = 0;
             }
         }
 
@@ -1174,9 +1210,58 @@ namespace abfwork
             };
             resultitem = http.GetHtml(item);
             string result = resultitem.Html;
-            if (result == "0" || result == "1")
+            if (result == "0")
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 秒杀成功！返回：{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result)); 
+            }
+            else if (result == "1")
+            {
                 timer1.Stop();
-            richTextBox1.AppendText(string.Format("\r\n{0}: {1} - {2}", DateTime.Now.ToString("HH:mm:ss"), useName,result));
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 秒杀失败，返回：{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result)); 
+            }
+            else if (result == "6")
+            {
+                //timer1.Stop();
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 秒杀还没有开始，返回：{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
+            }
+            else if (result == "4")
+            {
+                //timer1.Stop();
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 你已经参加过该活动了，返回：{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
+            }
+            else if (result == "5")
+            {
+                timer1.Stop();
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 渴望币不足，返回：{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
+            }
+            else if (result == "11")
+            {
+                timer1.Stop();
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 验证码错误，返回：{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
+            }
+        }
+
+        /// <summary>
+        /// 心跳-维持在线状态
+        /// </summary>
+        private void CheckSession()
+        {
+            item = new HttpItem()
+            {//兑换cdk
+                URL = duankou_url + "Lottery/CheckSession",//URL     必需项    
+                Method = "POST",
+                Cookie = cookie,//字符串Cookie     可选项
+                //用户代理设置为手机浏览器
+                UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
+                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                Referer = duankou_url + "Lottery/Index",
+                Postdata = "ticket=" + authenticode + "&code=" + captcha,//Post数据     可选项GET时不需要写
+                Timeout = 100000,//连接超时时间     可选项默认为100000    
+                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                //ContentType = "application/x-www-form-urlencoded; charset=UTF-8",//返回类型    可选项有默认值   
+            };
+            resultitem = http.GetHtml(item);
+            string result = resultitem.Html;
         }
 
         /*
@@ -1346,7 +1431,11 @@ namespace abfwork
             }
             else
             {
-                richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), "请输入验证码..."));
+                richTextBox1.BeginInvoke(new EventHandler(delegate
+                {
+                    richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), "请输入验证码..."));
+                }));
+                
 
             }
 
@@ -1608,6 +1697,7 @@ namespace abfwork
             {//兑换cdk
                 if (duihuan_count.ToString() == textBox_duihuancishu.Text.ToString() || isbtok == 888)
                 { //换账号&cdk
+                    num_ds_t++;
                     if (isbtok != 888 && isloginok == true && (isbtok >= 1 && isbtok <= 7) )
                     {
                         isbtok = 0;//复位
@@ -1763,7 +1853,6 @@ namespace abfwork
             {
                 is_yzm_TextChanged = 1;
                 captcha = textBox_yzm.Text;
-                is_yzm_TextChanged = 1;
                 if( comboBox1.SelectedIndex.ToString() == "1")
                 {
                     duihuan_bt();
@@ -1809,7 +1898,7 @@ namespace abfwork
             }
             else if (comboBox2.SelectedIndex.ToString() == "1" && comboBox1.SelectedIndex.ToString() == "4")
             {//兑换-门票
-                prizeID = "1";
+                prizeID = "10";
                 comboBox2.ForeColor = Color.Red;
             }
             else if (comboBox2.SelectedIndex.ToString() == "2" && comboBox1.SelectedIndex.ToString() == "5")
@@ -1914,8 +2003,87 @@ namespace abfwork
             else if (comboBox1.SelectedIndex.ToString() == "4" || comboBox1.SelectedIndex.ToString() == "4")
             {
                 comboBox2.SelectedIndex = 1;
-                
+                comboBox_url.SelectedIndex = 1;
             }
+        }
+
+        /// <summary>
+        /// 定时器显示时间，定时兑换
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            label_time.Text = "客户端时间：" + DateTime.Now.ToString("HH:mm:ss");
+            if(checkBox_dingshi.Checked)
+            {//启用定时兑换
+                if (DateTime.Now.ToString("mm") == (pinglv_t.ToString()) && textBox_yc.Text.ToString() != "1000")
+                {//到时间 开始兑换       
+                    num_ds_t = 0;
+                    pinglv_t += pinglv;
+                    if (pinglv_t >= 59)
+                    {//60进制时间
+                        pinglv_t = 0;
+                    }
+                    textBox_yc.Text = "1000";
+                }
+                if(num_ds_t >= num_ds)
+                {
+                    num_ds_t = 0;
+                    textBox_yc.Text = "999999";
+                }
+            }
+        }
+
+        /// <summary>
+        /// 整点定时开启兑换测试
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.SelectedIndex.ToString() == "0")
+            {
+                pinglv = 10;
+            }
+            else if (comboBox3.SelectedIndex.ToString() == "1")
+            {
+                pinglv = 15;
+            }
+            else if (comboBox3.SelectedIndex.ToString() == "2")
+            {
+                pinglv = 30;
+            }
+            else if (comboBox3.SelectedIndex.ToString() == "3")
+            {
+                pinglv = 60;
+            }
+        }
+
+        /// <summary>
+        /// 提示程序状态
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void checkBox_dingshi_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox_dingshi.Checked )
+            {
+                comboBox3.SelectedIndex = 1;//默认15分钟
+                label_dszt.Visible = true;
+                label_time.ForeColor = Color.Red;
+                num_ds = Int32.Parse(textBox3.Text);
+            }
+        }
+
+        /// <summary>
+        /// 定时兑换数量改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            num_ds = Int32.Parse(textBox3.Text);
         }
 
     }

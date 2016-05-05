@@ -61,6 +61,12 @@
             this.label13 = new System.Windows.Forms.Label();
             this.textBox_yc = new System.Windows.Forms.TextBox();
             this.label_yc = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.checkBox_dingshi = new System.Windows.Forms.CheckBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.textBox_pwd_weishu = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -94,12 +100,16 @@
             this.ColumnPwd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label_time = new System.Windows.Forms.Label();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.label_dszt = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -213,7 +223,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(77, 26);
             this.button2.TabIndex = 3;
-            this.button2.Text = "停止";
+            this.button2.Text = "暂停";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -357,6 +367,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage4);
@@ -437,6 +448,73 @@
             this.label_yc.Size = new System.Drawing.Size(101, 12);
             this.label_yc.TabIndex = 2;
             this.label_yc.Text = "操作延迟(毫秒)：";
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.checkBox_dingshi);
+            this.tabPage5.Controls.Add(this.textBox3);
+            this.tabPage5.Controls.Add(this.label20);
+            this.tabPage5.Controls.Add(this.label19);
+            this.tabPage5.Controls.Add(this.comboBox3);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(261, 173);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "定时兑换";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_dingshi
+            // 
+            this.checkBox_dingshi.AutoSize = true;
+            this.checkBox_dingshi.Location = new System.Drawing.Point(10, 15);
+            this.checkBox_dingshi.Name = "checkBox_dingshi";
+            this.checkBox_dingshi.Size = new System.Drawing.Size(96, 16);
+            this.checkBox_dingshi.TabIndex = 4;
+            this.checkBox_dingshi.Text = "启用定时兑换";
+            this.checkBox_dingshi.UseVisualStyleBackColor = true;
+            this.checkBox_dingshi.CheckedChanged += new System.EventHandler(this.checkBox_dingshi_CheckedChanged);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(77, 90);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(113, 21);
+            this.textBox3.TabIndex = 3;
+            this.textBox3.Text = "6";
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(8, 93);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(65, 12);
+            this.label20.TabIndex = 2;
+            this.label20.Text = "兑换数量：";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 55);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(65, 12);
+            this.label19.TabIndex = 1;
+            this.label19.Text = "定时时间：";
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "10分钟",
+            "15分钟",
+            "30分钟",
+            "60分钟"});
+            this.comboBox3.Location = new System.Drawing.Point(77, 52);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(113, 20);
+            this.comboBox3.TabIndex = 0;
+            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -790,6 +868,32 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label_time
+            // 
+            this.label_time.AutoSize = true;
+            this.label_time.Location = new System.Drawing.Point(13, 612);
+            this.label_time.Name = "label_time";
+            this.label_time.Size = new System.Drawing.Size(53, 12);
+            this.label_time.TabIndex = 10;
+            this.label_time.Text = "当前时间";
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 50;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // label_dszt
+            // 
+            this.label_dszt.AutoSize = true;
+            this.label_dszt.BackColor = System.Drawing.SystemColors.Control;
+            this.label_dszt.ForeColor = System.Drawing.Color.Red;
+            this.label_dszt.Location = new System.Drawing.Point(151, 612);
+            this.label_dszt.Name = "label_dszt";
+            this.label_dszt.Size = new System.Drawing.Size(83, 12);
+            this.label_dszt.TabIndex = 23;
+            this.label_dszt.Text = "定时兑换中...";
+            this.label_dszt.Visible = false;
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -798,6 +902,8 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.ClientSize = new System.Drawing.Size(917, 633);
+            this.Controls.Add(this.label_dszt);
+            this.Controls.Add(this.label_time);
             this.Controls.Add(this.label_cdkcount);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.label8);
@@ -825,6 +931,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
@@ -906,6 +1014,15 @@
         private System.Windows.Forms.Button button_kdcb;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox comboBox_url;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.Label label_time;
+        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.CheckBox checkBox_dingshi;
+        private System.Windows.Forms.Label label_dszt;
 
     }
 }
