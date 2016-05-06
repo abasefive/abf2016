@@ -61,17 +61,8 @@
             this.label13 = new System.Windows.Forms.Label();
             this.textBox_yc = new System.Windows.Forms.TextBox();
             this.label_yc = new System.Windows.Forms.Label();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.checkBox_dingshi = new System.Windows.Forms.CheckBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.textBox_pwd_weishu = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.checkBox_sjpwd = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkBox_yzm_zds = new System.Windows.Forms.CheckBox();
             this.checkBox_uu = new System.Windows.Forms.CheckBox();
             this.button_uu = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
@@ -80,6 +71,16 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textBox_pwd_weishu = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.checkBox_sjpwd = new System.Windows.Forms.CheckBox();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.checkBox_dingshi = new System.Windows.Forms.CheckBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.button_kdcb = new System.Windows.Forms.Button();
             this.button_kdbh = new System.Windows.Forms.Button();
@@ -109,9 +110,9 @@
             this.groupBox5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            this.tabPage5.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
@@ -173,7 +174,8 @@
             "100币抽旅游卡",
             "100币抽电容笔",
             "100币抽时尚耳机",
-            "100币抽运动摄像机"});
+            "100币抽运动摄像机",
+            "秒杀智能手环"});
             this.comboBox2.Location = new System.Drawing.Point(65, 59);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(124, 20);
@@ -367,9 +369,9 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage5);
-            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(6, 20);
             this.tabControl1.Name = "tabControl1";
@@ -449,6 +451,150 @@
             this.label_yc.TabIndex = 2;
             this.label_yc.Text = "操作延迟(毫秒)：";
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.checkBox_yzm_zds);
+            this.tabPage2.Controls.Add(this.checkBox_uu);
+            this.tabPage2.Controls.Add(this.button_uu);
+            this.tabPage2.Controls.Add(this.label7);
+            this.tabPage2.Controls.Add(this.textBox_uupwd);
+            this.tabPage2.Controls.Add(this.textBox_uuname);
+            this.tabPage2.Controls.Add(this.label6);
+            this.tabPage2.Controls.Add(this.label5);
+            this.tabPage2.Controls.Add(this.label4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(261, 173);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "验证码选项";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_yzm_zds
+            // 
+            this.checkBox_yzm_zds.AutoSize = true;
+            this.checkBox_yzm_zds.Location = new System.Drawing.Point(17, 15);
+            this.checkBox_yzm_zds.Name = "checkBox_yzm_zds";
+            this.checkBox_yzm_zds.Size = new System.Drawing.Size(108, 16);
+            this.checkBox_yzm_zds.TabIndex = 8;
+            this.checkBox_yzm_zds.Text = "验证码自动识别";
+            this.checkBox_yzm_zds.UseVisualStyleBackColor = true;
+            this.checkBox_yzm_zds.CheckedChanged += new System.EventHandler(this.checkBox_yzm_zds_CheckedChanged);
+            // 
+            // checkBox_uu
+            // 
+            this.checkBox_uu.AutoSize = true;
+            this.checkBox_uu.Location = new System.Drawing.Point(17, 43);
+            this.checkBox_uu.Name = "checkBox_uu";
+            this.checkBox_uu.Size = new System.Drawing.Size(84, 16);
+            this.checkBox_uu.TabIndex = 7;
+            this.checkBox_uu.Text = "使用uu打码";
+            this.checkBox_uu.UseVisualStyleBackColor = true;
+            // 
+            // button_uu
+            // 
+            this.button_uu.Location = new System.Drawing.Point(17, 144);
+            this.button_uu.Name = "button_uu";
+            this.button_uu.Size = new System.Drawing.Size(75, 23);
+            this.button_uu.TabIndex = 6;
+            this.button_uu.Text = "登录";
+            this.button_uu.UseVisualStyleBackColor = true;
+            this.button_uu.Click += new System.EventHandler(this.button_uu_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(73, 122);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(11, 12);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "0";
+            // 
+            // textBox_uupwd
+            // 
+            this.textBox_uupwd.Location = new System.Drawing.Point(73, 93);
+            this.textBox_uupwd.Name = "textBox_uupwd";
+            this.textBox_uupwd.Size = new System.Drawing.Size(100, 21);
+            this.textBox_uupwd.TabIndex = 4;
+            // 
+            // textBox_uuname
+            // 
+            this.textBox_uuname.Location = new System.Drawing.Point(73, 65);
+            this.textBox_uuname.Name = "textBox_uuname";
+            this.textBox_uuname.Size = new System.Drawing.Size(100, 21);
+            this.textBox_uuname.TabIndex = 3;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(15, 122);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(41, 12);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "提分：";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(15, 96);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(41, 12);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "密码：";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 68);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "用户名：";
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.textBox_pwd_weishu);
+            this.tabPage1.Controls.Add(this.label16);
+            this.tabPage1.Controls.Add(this.checkBox_sjpwd);
+            this.tabPage1.Controls.Add(this.textBox_newpwd);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(261, 173);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "密码设定";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // textBox_pwd_weishu
+            // 
+            this.textBox_pwd_weishu.Location = new System.Drawing.Point(85, 107);
+            this.textBox_pwd_weishu.Name = "textBox_pwd_weishu";
+            this.textBox_pwd_weishu.Size = new System.Drawing.Size(88, 21);
+            this.textBox_pwd_weishu.TabIndex = 8;
+            this.textBox_pwd_weishu.Text = "7";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(20, 110);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(59, 12);
+            this.label16.TabIndex = 7;
+            this.label16.Text = "密码位数:";
+            // 
+            // checkBox_sjpwd
+            // 
+            this.checkBox_sjpwd.AutoSize = true;
+            this.checkBox_sjpwd.Checked = true;
+            this.checkBox_sjpwd.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_sjpwd.Location = new System.Drawing.Point(22, 85);
+            this.checkBox_sjpwd.Name = "checkBox_sjpwd";
+            this.checkBox_sjpwd.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_sjpwd.TabIndex = 6;
+            this.checkBox_sjpwd.Text = "随机密码";
+            this.checkBox_sjpwd.UseVisualStyleBackColor = true;
+            // 
             // tabPage5
             // 
             this.tabPage5.Controls.Add(this.checkBox_dingshi);
@@ -515,138 +661,6 @@
             this.comboBox3.Size = new System.Drawing.Size(113, 20);
             this.comboBox3.TabIndex = 0;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.textBox_pwd_weishu);
-            this.tabPage1.Controls.Add(this.label16);
-            this.tabPage1.Controls.Add(this.checkBox_sjpwd);
-            this.tabPage1.Controls.Add(this.textBox_newpwd);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(261, 173);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "密码设定";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // textBox_pwd_weishu
-            // 
-            this.textBox_pwd_weishu.Location = new System.Drawing.Point(85, 107);
-            this.textBox_pwd_weishu.Name = "textBox_pwd_weishu";
-            this.textBox_pwd_weishu.Size = new System.Drawing.Size(88, 21);
-            this.textBox_pwd_weishu.TabIndex = 8;
-            this.textBox_pwd_weishu.Text = "7";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(20, 110);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(59, 12);
-            this.label16.TabIndex = 7;
-            this.label16.Text = "密码位数:";
-            // 
-            // checkBox_sjpwd
-            // 
-            this.checkBox_sjpwd.AutoSize = true;
-            this.checkBox_sjpwd.Checked = true;
-            this.checkBox_sjpwd.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_sjpwd.Location = new System.Drawing.Point(22, 85);
-            this.checkBox_sjpwd.Name = "checkBox_sjpwd";
-            this.checkBox_sjpwd.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_sjpwd.TabIndex = 6;
-            this.checkBox_sjpwd.Text = "随机密码";
-            this.checkBox_sjpwd.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.checkBox_uu);
-            this.tabPage2.Controls.Add(this.button_uu);
-            this.tabPage2.Controls.Add(this.label7);
-            this.tabPage2.Controls.Add(this.textBox_uupwd);
-            this.tabPage2.Controls.Add(this.textBox_uuname);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.label5);
-            this.tabPage2.Controls.Add(this.label4);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(261, 173);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "远程打码";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_uu
-            // 
-            this.checkBox_uu.AutoSize = true;
-            this.checkBox_uu.Location = new System.Drawing.Point(12, 20);
-            this.checkBox_uu.Name = "checkBox_uu";
-            this.checkBox_uu.Size = new System.Drawing.Size(84, 16);
-            this.checkBox_uu.TabIndex = 7;
-            this.checkBox_uu.Text = "使用uu打码";
-            this.checkBox_uu.UseVisualStyleBackColor = true;
-            // 
-            // button_uu
-            // 
-            this.button_uu.Location = new System.Drawing.Point(14, 121);
-            this.button_uu.Name = "button_uu";
-            this.button_uu.Size = new System.Drawing.Size(75, 23);
-            this.button_uu.TabIndex = 6;
-            this.button_uu.Text = "登录";
-            this.button_uu.UseVisualStyleBackColor = true;
-            this.button_uu.Click += new System.EventHandler(this.button_uu_Click);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(70, 99);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(11, 12);
-            this.label7.TabIndex = 5;
-            this.label7.Text = "0";
-            // 
-            // textBox_uupwd
-            // 
-            this.textBox_uupwd.Location = new System.Drawing.Point(70, 70);
-            this.textBox_uupwd.Name = "textBox_uupwd";
-            this.textBox_uupwd.Size = new System.Drawing.Size(100, 21);
-            this.textBox_uupwd.TabIndex = 4;
-            // 
-            // textBox_uuname
-            // 
-            this.textBox_uuname.Location = new System.Drawing.Point(70, 42);
-            this.textBox_uuname.Name = "textBox_uuname";
-            this.textBox_uuname.Size = new System.Drawing.Size(100, 21);
-            this.textBox_uuname.TabIndex = 3;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 99);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(41, 12);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "提分：";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 73);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 12);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "密码：";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 12);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "用户名：";
             // 
             // tabPage4
             // 
@@ -871,6 +885,7 @@
             // label_time
             // 
             this.label_time.AutoSize = true;
+            this.label_time.ForeColor = System.Drawing.Color.Red;
             this.label_time.Location = new System.Drawing.Point(13, 612);
             this.label_time.Name = "label_time";
             this.label_time.Size = new System.Drawing.Size(53, 12);
@@ -931,12 +946,12 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
-            this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1023,6 +1038,7 @@
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.CheckBox checkBox_dingshi;
         private System.Windows.Forms.Label label_dszt;
+        private System.Windows.Forms.CheckBox checkBox_yzm_zds;
 
     }
 }

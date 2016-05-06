@@ -43,6 +43,8 @@ namespace abfwork
         int num_ds = 0;//定时兑换设定数量
         int num_ds_t = 0;
 
+        int index;
+
         string duankou_url = "";
         int yzm_weishu = 4;
         string prizeID = "00";//价值类别
@@ -85,6 +87,21 @@ namespace abfwork
         int codeType = 1005;//验证码长度
         int m_codeID;//上报错误使用
         bool iscaptchaerr=false;//验证码是否错误
+
+        [DllImport("AntiVC.dll")]
+        public static extern int LoadCdsFromFile(string FilePath, string Password);
+
+        [DllImport("AntiVC.dll")]
+        public static extern int LoadCdsFromBuffer(byte[] FileBuffer, int FileBufLen, string Password);
+
+        [DllImport("AntiVC.dll")]
+        public static extern bool GetVcodeFromFile(int CdsFileIndex, string FilePath, StringBuilder Vcode);
+
+        [DllImport("AntiVC.dll")]
+        public static extern bool GetVcodeFromBuffer(int CdsFileIndex, byte[] FileBuffer, int ImgBufLen, StringBuilder Vcode);
+
+        [DllImport("AntiVC.dll")]
+        public static extern bool GetVcodeFromURL(int CdsFileIndex, string ImgURL, StringBuilder Vcode);
 
         /// <summary>
         /// 生成随机数
@@ -151,7 +168,7 @@ namespace abfwork
                 myFs.Close();
             }          
             Directory.CreateDirectory(logdir);//创建日志目录
-            textBox_yzm.Focus();
+            //textBox_yzm.Focus();
             this.comboBox1.SelectedIndex = 1;
             this.comboBox_url.SelectedIndex = 0;
             duankou_url = "http://2016utc.pepsi.cn/";
@@ -177,6 +194,19 @@ namespace abfwork
             //comboBox_kd.SelectedIndex = 0;
 
             //showAttr();
+
+            checkBox_yzm_zds.Checked = true;
+
+            index = LoadCdsFromFile("百事.cds", "19870216");
+            if (checkBox_yzm_zds.Checked && index == 1)
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), "成功载入验证码自动识别模块！"));
+            }
+            else if(index == -1)
+            {
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), "载入验证码自动识别模块失败！"));
+            }
+
             System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
             sp.SoundLocation = "sound/go.wav";
             sp.Play();
@@ -418,7 +448,7 @@ namespace abfwork
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始兑换cdk...", DateTime.Now.ToString("HH:mm:ss")));
                 timer1.Interval = Int32.Parse(textBox_yc.Text);
                 timer1.Start();
-                textBox_yzm.Focus();
+                //textBox_yzm.Focus();
                 duihuan();
             }
             else if (comboBox1.SelectedIndex.ToString() == "2")
@@ -426,7 +456,7 @@ namespace abfwork
                 richTextBox1.AppendText(string.Format("\r\n{0}: 开始注册账号...", DateTime.Now.ToString("HH:mm:ss")));
                 timer1.Start();
                 getVorityImage();
-                textBox_yzm.Focus();
+                //textBox_yzm.Focus();
             }
             else if (comboBox1.SelectedIndex.ToString() == "3")
             {//修改密码
@@ -630,7 +660,7 @@ namespace abfwork
                 {
                     is_huanzh_ok = 0;//复位
 
-                    duihuan_bt();
+                    //duihuan_bt();
                 }
 
             }
@@ -671,8 +701,8 @@ namespace abfwork
             if (result == "请输入正确的验证码")
             {//验证码错误
 
-                richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, result));
-
+                richTextBox1.AppendText(string.Format("\r\n{0}: {1}-{2}", DateTime.Now.ToString("HH:mm:ss"), useName, "验证码错误"));
+                getVorityImage();
                 isbtok = 88;
             }
             else if (result == "0")
@@ -1376,15 +1406,66 @@ namespace abfwork
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
-                Referer = "http://www.ksfteasp.com/WAP/Register.html",
+                Referer = duankou_url + "Home/Index",
                 //Postdata = "&oldvalue=" + captcha,//Post数据     可选项GET时不需要写
                 Timeout = 100000,//连接超时时间     可选项默认为100000    
                 ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
                 ContentType = "application/x-www-form-urlencoded",//返回类型    可选项有默认值 
             };
             pictureBox1.Image = http.GetImage(itemGet);
+
+            //***********是否自动识别验证码*****************
+            if(checkBox_yzm_zds.Checked)
+            {
+                Thread t = new Thread(new ThreadStart(delegate
+                {//后台线程自动识别
+                    StringBuilder Result = new StringBuilder('\0', 256);
+
+                    MemoryStream ms = new MemoryStream();
+                    pictureBox1.Image.Save(ms, ImageFormat.Gif);
+                    byte[] buffer = new byte[ms.Length];
+                    ms.Position = 0;
+                    ms.Read(buffer, 0, buffer.Length);
+                    ms.Flush();
+                    bool is_sb_ok = GetVcodeFromBuffer(index, buffer, buffer.Length, Result);
+                    ms.Close();
+                    ms.Dispose();
+                    //pictureBox1.Image.Save("yzm.gif", ImageFormat.Gif);
+                    //bool is_sb_ok = GetVcodeFromFile(index, "yzm.gif", Result);
+                    textBox_yzm.BeginInvoke(new EventHandler(delegate
+                    {
+                        if (is_sb_ok)
+                        {
+                            if (Result.ToString().Length == 4)
+                            {
+                            //    richTextBox1.BeginInvoke(new EventHandler(delegate
+                            //    {
+                            //        richTextBox1.AppendText(string.Format("\r\n{0}: 识别结果-{1}！", DateTime.Now.ToString("HH:mm:ss"), Result.ToString()));
+                            //    }));
+                                textBox_yzm.Text = Result.ToString();
+                            }
+                            else
+                            {
+                                getVorityImage();//换验证码图片
+                            }
+                        }
+                        else
+                        {
+                            //richTextBox1.BeginInvoke(new EventHandler(delegate
+                            //{
+                            //    richTextBox1.AppendText(string.Format("\r\n{0}: 识别失败！", DateTime.Now.ToString("HH:mm:ss")));
+                            //}));
+                            getVorityImage();//换验证码图片
+                        }
+                    }));
+
+                }));
+                t.IsBackground = true;
+                t.Start();
+            }
+
             //***********判断UU打码平台可用性，即对接打码*****************
-            if (isDamaLogin)
+            else if (isDamaLogin)
             {
                 //string captchaURL = "http://www.ksfteasp.com/CheckCode.aspx";
                 //下面是软件id对应的dll校验key。在开发者后台-我的软件里面可以查的到。
@@ -1698,7 +1779,7 @@ namespace abfwork
                 if (duihuan_count.ToString() == textBox_duihuancishu.Text.ToString() || isbtok == 888)
                 { //换账号&cdk
                     num_ds_t++;
-                    if (isbtok != 888 && isloginok == true && (isbtok >= 1 && isbtok <= 7) )
+                    if (isbtok != 888 && isloginok == true && (isbtok >= 1 && isbtok <= 7))
                     {
                         isbtok = 0;//复位
                         if (++numIndexOfDatagridview2Row == dataGridView2.RowCount)
@@ -1715,11 +1796,11 @@ namespace abfwork
                                 dataGridView2.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview2Row - 10;//滑块位置更新
 
                         }
-                    
+
                     }
-                    isloginok=false;//复位
+                    isloginok = false;//复位
                     //isbtok = 0;//复位
-                    if (++numIndexOfDatagridview1Row == dataGridView1.RowCount )
+                    if (++numIndexOfDatagridview1Row == dataGridView1.RowCount)
                     {
                         timer1.Stop();
                         MessageBox.Show("全部帐号完成！", "提示");
@@ -1735,8 +1816,9 @@ namespace abfwork
                     }
                     is_huanzh_ok = 1;
                     duihuan();
+                    getVorityImage();
                 }
-                else if (isloginok == true && (isbtok >=1 && isbtok <=7) )
+                else if (isloginok == true && (isbtok >= 1 && isbtok <= 7))
                 {//只用换cdk
                     isbtok = 0;//复位
                     if (++numIndexOfDatagridview2Row == dataGridView2.RowCount)
@@ -1753,12 +1835,12 @@ namespace abfwork
                             dataGridView2.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview2Row - 10;//滑块位置更新
 
                     }
-                    duihuan_bt();
+                    getVorityImage();
                 }
                 else if (isloginok == true && isbtok == 999)
                 {//服务器错误 ，休息一下 继续
                     isbtok = 0;//复位
-                    duihuan_bt();
+                    getVorityImage();
                 }
 
             }
@@ -1849,9 +1931,8 @@ namespace abfwork
 
         private void textBox_yzm_TextChanged(object sender, EventArgs e)
         {
-            if (textBox_yzm.Text.Length == yzm_weishu  && checkBox_uu.Checked==false && is_yzm_TextChanged==0)
+            if (textBox_yzm.Text.Length == yzm_weishu  && checkBox_uu.Checked==false)
             {
-                is_yzm_TextChanged = 1;
                 captcha = textBox_yzm.Text;
                 if( comboBox1.SelectedIndex.ToString() == "1")
                 {
@@ -1975,14 +2056,16 @@ namespace abfwork
             {
                 duankou_url = "http://utc.pepsi.cn/";
                 comboBox_url.ForeColor = Color.YellowGreen;
-                yzm_weishu = 5;
+                if (comboBox1.SelectedIndex.ToString() != "6")
+                {
+                    yzm_weishu = 5;
+                }
+                else
+                {//秒杀验证码4位
+                    yzm_weishu = 4;
+                }
             }
-            else if (comboBox_url.SelectedIndex.ToString() == "6")
-            {//秒杀验证码4位
-                duankou_url = "http://utc.pepsi.cn/";
-                comboBox_url.ForeColor = Color.YellowGreen;
-                yzm_weishu = 4;
-            }
+           
         }
 
         /// <summary>
@@ -2000,9 +2083,14 @@ namespace abfwork
             {//兑换使用手机wap端口
                 comboBox_url.SelectedIndex = 0;
             }
-            else if (comboBox1.SelectedIndex.ToString() == "4" || comboBox1.SelectedIndex.ToString() == "4")
+            else if (comboBox1.SelectedIndex.ToString() == "4")
             {
                 comboBox2.SelectedIndex = 1;
+                comboBox_url.SelectedIndex = 1;
+            }
+            else if (comboBox1.SelectedIndex.ToString() == "6")
+            {
+                comboBox2.SelectedIndex = 6;
                 comboBox_url.SelectedIndex = 1;
             }
         }
@@ -2084,6 +2172,22 @@ namespace abfwork
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             num_ds = Int32.Parse(textBox3.Text);
+        }
+
+        private void checkBox_yzm_zds_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox_yzm_zds.Checked)
+            {
+                pictureBox1.Visible = false;
+                label3.Visible = false;
+                textBox_yzm.Visible = false;
+            }
+            else if (!checkBox_yzm_zds.Checked)
+            {
+                pictureBox1.Visible = true;
+                label3.Visible = true;
+                textBox_yzm.Visible = true;
+            }
         }
 
     }
