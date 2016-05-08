@@ -44,7 +44,7 @@ namespace abfwork
         int num_ds_t = 0;
 
         int index;
-
+        int wenjian_ok = 0;//文件是否保存完毕
         string duankou_url = "";
         int yzm_weishu = 4;
         string prizeID = "00";//价值类别
@@ -107,14 +107,15 @@ namespace abfwork
         /// 生成随机数
         /// </summary>
         private static char[] constantNum = {'0','1','2','3','4','5','6','7','8','9'};
-        private static char[] constant = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z', 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+        private static char[] constant = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        private static char[] constant_daxie = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
         public static string GenerateRandomNumber(int Length, int j)
         {
-            System.Text.StringBuilder newRandom = new System.Text.StringBuilder(62);
+            System.Text.StringBuilder newRandom = new System.Text.StringBuilder(36);
             Random rd = new Random(DateTime.Now.Millisecond + j);
             for (int i = 0; i < Length; i++)
             {
-                newRandom.Append(constant[rd.Next(62)]);
+                newRandom.Append(constant[rd.Next(36)]);
             }
             return newRandom.ToString();
         }
@@ -152,27 +153,34 @@ namespace abfwork
                 mySw.Close();
                 myFs.Close();
             }
-            
-            if (File.Exists("cookie.txt") == true)
-            {//读取cookie
-                StreamReader reader = new StreamReader("cookie.txt", Encoding.Default);
-                cookie=reader.ReadLine();                
-                reader.Close();
 
-            }
-            else
-            {
-                FileStream myFs = new FileStream("cookie.txt", FileMode.Create);
-                StreamWriter mySw = new StreamWriter(myFs);
-                mySw.Close();
-                myFs.Close();
-            }          
+            //if (File.Exists("cookie.txt") == true)
+            //{//读取cookie
+            //    StreamReader reader = new StreamReader("cookie.txt", Encoding.Default);
+            //    cookie = reader.ReadLine();
+            //    reader.Close();
+
+            //}
+            //else
+            //{
+            //    FileStream myFs = new FileStream("cookie.txt", FileMode.Create);
+            //    StreamWriter mySw = new StreamWriter(myFs);
+            //    mySw.Close();
+            //    myFs.Close();
+            //}          
             Directory.CreateDirectory(logdir);//创建日志目录
+            
+            
             //textBox_yzm.Focus();
             this.comboBox1.SelectedIndex = 1;
             this.comboBox_url.SelectedIndex = 0;
-            duankou_url = "http://2016utc.pepsi.cn/";
-            timer2.Start();
+            duankou_url = "http://2016utc.pepsi.cn/";//默认值
+            timer2.Start();//显示时间
+            //webBrowser1.ScriptErrorsSuppressed = true;
+            //webBrowser1.BeginInvoke(new EventHandler(delegate
+            //{//后台线程开启浏览器
+            //    webBrowser1.Navigate(duankou_url);
+            //}));
         }
 
         /// <summary>
@@ -207,9 +215,14 @@ namespace abfwork
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1}", DateTime.Now.ToString("HH:mm:ss"), "载入验证码自动识别模块失败！"));
             }
 
+            bintodatagridview1(dataGridView1, "data1.data");
+            bintodatagridview2(dataGridView2, "data2.data");
+            
             System.Media.SoundPlayer sp = new System.Media.SoundPlayer();
             sp.SoundLocation = "sound/go.wav";
             sp.Play();
+
+            
         }
 
         /// <summary>
@@ -259,6 +272,7 @@ namespace abfwork
                 dataGridView1.RowHeadersDefaultCellStyle.ForeColor,
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
+
         /// <summary>
         /// 让DataGridView显示行号   见：www.cnblogs.com/JuneZhang/archive/2011/11/21/2257630.html
         /// </summary>
@@ -278,6 +292,7 @@ namespace abfwork
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
 
         }
+
         /// <summary>
         /// 拖拽导入帐号数据1
         /// </summary>
@@ -294,6 +309,7 @@ namespace abfwork
                 e.Effect = DragDropEffects.None;
             }
         }
+
         /// <summary>
         /// 拖拽导入帐号数据2
         /// </summary>
@@ -308,9 +324,11 @@ namespace abfwork
                 if (dtnumflag == 0)
                 {
                     //给datatable添加三个列
+                    dt_num.Columns.Add("选择", typeof(bool));
                     dt_num.Columns.Add("帐号", typeof(String));
                     dt_num.Columns.Add("密码", typeof(String));
                     dt_num.Columns.Add("状态", typeof(String));
+                    dt_num.Columns.Add("cookie", typeof(String));
                     dt_num.PrimaryKey = new DataColumn[] { dt_num.Columns["帐号"] };//设置datatable主键
                     dtnumflag++;//标记
                 }
@@ -323,31 +341,39 @@ namespace abfwork
                     string[] data = reader.ReadLine().Replace("----", "-").Split('-');
                     //新建一行，并将读出的数据分段，分别存入3个对应的列中
                     DataRow dr = dt_num.NewRow();
-                    dr[0] = data[0];
-                    dr[1] = data[1];
-                    dr[2] = "";
-                    if (dt_num.Rows.Find(dr[0]) == null)
+                    dr[0] = false;
+                    dr[1] = data[0];
+                    dr[2] = data[1];
+                    dr[3] = "";
+                    //dr[4] = "ASP.NET_SessionId=" + GenerateRandomNumber(16,1);
+                    if (dt_num.Rows.Find(dr[1]) == null)
                     {//判断是否重复
                         //将这行数据加入到datatable中
                         dt_num.Rows.Add(dr);
                         cunt++;
                     }
                     else
-                        richTextBox1.AppendText(string.Format("\r\n{0}: 去除重复帐号:{1}", DateTime.Now.ToString("HH:mm:ss"), dr[0]));
+                        richTextBox1.AppendText(string.Format("\r\n{0}: 去除重复帐号:{1}", DateTime.Now.ToString("HH:mm:ss"), dr[1]));
                 }
                 richTextBox1.AppendText(string.Format("\r\n{0}: 导入不重复帐号:{1}个", DateTime.Now.ToString("HH:mm:ss"), cunt));
                 //关闭文件
-                label_usenamecount.Text = cunt.ToString();//显示帐号总数
+                
                 reader.Close();
                 //将datatable绑定到datagridview上显示结果
                 dataGridView1.DataSource = dt_num;
+                label_usenamecount.Text = dataGridView1.RowCount.ToString();//显示帐号总数
+
+                datagridviewtobin(dataGridView1, "data1.data");
             }
             catch (Exception e1)
             {
                 MessageBox.Show("文件内容格式错误：请用“帐号----密码”的格式导入数据！", "错误："+e1.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+            
+
         }
+
         /// <summary>
         /// 拖拽导入cdk数据1
         /// </summary>
@@ -364,6 +390,7 @@ namespace abfwork
                 e.Effect = DragDropEffects.None;
             }
         }
+
         /// <summary>
         /// 拖拽导入cdk数据2
         /// </summary>
@@ -406,17 +433,275 @@ namespace abfwork
                         richTextBox1.AppendText(string.Format("\r\n{0}: 去除重复cdk:{1}", DateTime.Now.ToString("HH:mm:ss"), dr[0]));
                 }
                 richTextBox1.AppendText(string.Format("\r\n{0}: 导入不重复cdk:{1}个", DateTime.Now.ToString("HH:mm:ss"), cunt));
-                label_cdkcount.Text = cunt.ToString();//显示cdk总数
+                
                 //关闭文件
                 reader.Close();
                 //将datatable绑定到datagridview上显示结果
                 dataGridView2.DataSource = dt_cdk;
+                label_cdkcount.Text = dataGridView2.RowCount.ToString();//显示cdk总数
+
+                datagridviewtobin(dataGridView2, "data2.data");
             }
             catch (Exception e1)
             {
                 MessageBox.Show("文件内容错误：请导入正确的CDK数据！", "错误：" + e1.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        
+        /// <summary>
+        /// 剪切板数据操作
+        /// </summary>
+        /// <param name="DBGrid"></param>
+        public static void DataGirdViewCellPaste(DataGridView DBGrid)
+        {
+            try
+            {
+                // 获取剪切板的内容，并按行分割 
+                string pasteText = "";
+                pasteText = Clipboard.GetText();
+
+                if (string.IsNullOrEmpty(pasteText))
+                    return;
+                if (pasteText == "pasteText")
+                {
+                    return;
+                }
+                int tnum = 0;
+                int nnum = 0;
+                //获得当前剪贴板内容的行、列数
+                for (int i = 0; i < pasteText.Length; i++)
+                {
+                    if (pasteText.Substring(i, 1) == "\t")
+                    {
+                        tnum++;
+                    }
+                    if (pasteText.Substring(i, 1) == "\n")
+                    {
+                        nnum++;
+                    }
+                }
+                Object[,] data;
+                //粘贴板上的数据来自于EXCEL时，每行末都有\n，在DATAGRIDVIEW内复制时，最后一行末没有\n
+                if (pasteText.Substring(pasteText.Length - 1, 1) == "\n")
+                {
+                    nnum = nnum - 1;
+                }
+                tnum = tnum / (nnum + 1);
+                data = new object[nnum + 1, tnum + 1];//定义一个二维数组
+
+                String rowstr;
+                rowstr = "";
+                //MessageBox.Show(pasteText.IndexOf("B").ToString());
+                //对数组赋值
+                for (int i = 0; i < (nnum + 1); i++)
+                {
+                    for (int colIndex = 0; colIndex < (tnum + 1); colIndex++)
+                    {
+                        //一行中的最后一列
+                        if (colIndex == tnum && pasteText.IndexOf("\r") != -1)
+                        {
+                            rowstr = pasteText.Substring(0, pasteText.IndexOf("\r"));
+                        }
+                        //最后一行的最后一列
+                        if (colIndex == tnum && pasteText.IndexOf("\r") == -1)
+                        {
+                            rowstr = pasteText.Substring(0);
+                        }
+                        //其他行列
+                        if (colIndex != tnum)
+                        {
+                            rowstr = pasteText.Substring(0, pasteText.IndexOf("\t"));
+                            pasteText = pasteText.Substring(pasteText.IndexOf("\t") + 1);
+                        }
+                        data[i, colIndex] = rowstr;
+                    }
+                    //截取下一行数据
+                    pasteText = pasteText.Substring(pasteText.IndexOf("\n") + 1);
+                }
+                //获取当前选中单元格所在的列序号
+                int curntindex = DBGrid.CurrentRow.Cells.IndexOf(DBGrid.CurrentCell);
+                //获取获取当前选中单元格所在的行序号
+                int rowindex = DBGrid.CurrentRow.Index;
+                //MessageBox.Show(curntindex.ToString ());
+                for (int j = 0; j < (nnum + 1); j++)
+                {
+                    for (int colIndex = 0; colIndex < (tnum + 1); colIndex++)
+                    {
+                        if (!DBGrid.Columns[colIndex + curntindex].Visible)
+                        {
+                            continue;
+                        }
+                        if (!DBGrid.Rows[j + rowindex].Cells[colIndex + curntindex].ReadOnly)
+                        {
+                            DBGrid.Rows[j + rowindex].Cells[colIndex + curntindex].Value = data[j, colIndex];
+                        }
+                    }
+                }
+                Clipboard.Clear();
+            }
+            catch
+            {
+                Clipboard.Clear();
+                //MessageBox.Show("粘贴区域大小不一致");
+                return;
+            }
+        }
+
+        /// <summary>
+        /// DataGridView数据保存到bin文件
+        /// </summary>
+        /// <param name="datagridview"></param>
+        /// <param name="bin"></param>
+        private void datagridviewtobin(DataGridView datagridview, string bin)
+        {
+
+            FileStream fileStream = new FileStream(bin, FileMode.OpenOrCreate);
+            StreamWriter streamWriter = new StreamWriter(fileStream, System.Text.Encoding.Unicode);
+
+            StringBuilder strBuilder = new StringBuilder();
+
+            try
+            {
+                for (int i = 0; i < datagridview.Rows.Count; i++)
+                {
+                    strBuilder = new StringBuilder();
+                    for (int j = 0; j < datagridview.Columns.Count; j++)
+                    {
+                        strBuilder.Append(datagridview.Rows[i].Cells[j].Value.ToString() + "----");
+                    }
+                    //strBuilder.Remove(strBuilder.Length - 1, 1);
+                    streamWriter.WriteLine(strBuilder.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                string strErrorMessage = ex.Message;
+            }
+            finally
+            {
+                streamWriter.Close();
+                fileStream.Close();
+                wenjian_ok = 1;//文件保存完成
+            }
+
+
+        }
+
+        /// <summary>
+        /// 加载数据到DataGridView1
+        /// </summary>
+        /// <param name="datagridview"></param>
+        /// <param name="bin"></param>
+        private void bintodatagridview1(DataGridView datagridview, string bin)
+        {
+            int cunt = 0;
+            try
+            {
+                string strFile = bin;//文件路径
+                if (dtnumflag == 0)
+                {
+                    //给datatable添加三个列
+                    dt_num.Columns.Add("选择", typeof(bool));
+                    dt_num.Columns.Add("帐号", typeof(String));
+                    dt_num.Columns.Add("密码", typeof(String));
+                    dt_num.Columns.Add("状态", typeof(String));
+                    dt_num.Columns.Add("cookie", typeof(String));
+                    dt_num.PrimaryKey = new DataColumn[] { dt_num.Columns["帐号"] };//设置datatable主键
+                    dtnumflag++;//标记
+                }
+                FileStream fileStream = new FileStream(bin, FileMode.OpenOrCreate);
+                //读入文件
+                StreamReader reader = new StreamReader(fileStream, Encoding.Unicode);
+                //循环读取所有行
+                while (!reader.EndOfStream)
+                {
+                    //将每行数据，用-分割成3段
+                    string[] data = reader.ReadLine().Replace("----", "-").Split('-');
+                    //新建一行，并将读出的数据分段，分别存入4个对应的列中
+                    DataRow dr = dt_num.NewRow();
+                    if (data[0] == "True")
+                    {
+                        dr[0] = true;
+                    }
+                    else
+                    {
+                        dr[0] = false; ;
+                    }
+                    dr[1] = data[1];
+                    dr[2] = data[2];
+                    dr[3] = data[3];
+                    dr[4] = data[4];
+                    dt_num.Rows.Add(dr);
+                    cunt++;
+                }
+                //关闭文件
+                reader.Close();
+                fileStream.Close();
+                //将datatable绑定到datagridview上显示结果
+                datagridview.DataSource = dt_num;
+                label_usenamecount.Text = datagridview.RowCount.ToString();//显示帐号总数
+            }
+            catch (Exception e1)
+            {
+                MessageBox.Show("文件内容格式错误：请用“帐号----密码”的格式导入数据！", "错误：" + e1.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// 加载数据到DataGridView2
+        /// </summary>
+        /// <param name="datagridview"></param>
+        /// <param name="bin"></param>
+        private void bintodatagridview2(DataGridView datagridview, string bin)
+        {
+            int cunt = 0;
+            try
+            {
+                //string strFile = bin;//文件路径
+                if (dtcdkflag == 0)
+                {
+                    //给datatable添加1个列
+                    dt_cdk.Columns.Add("CDK", typeof(String));
+                    dt_cdk.Columns.Add("兑换结果", typeof(String));
+                    dt_cdk.Columns.Add("时间", typeof(String));
+                    dt_cdk.PrimaryKey = new DataColumn[] { dt_cdk.Columns["CDK"] };//设置datatable主键
+                    dtcdkflag++;
+                }
+                FileStream fileStream = new FileStream(bin, FileMode.OpenOrCreate);
+                //读入文件
+                StreamReader reader = new StreamReader(fileStream, Encoding.Unicode);
+
+                //循环读取所有行
+                while (!reader.EndOfStream)
+                {
+                    //将每行数据，用-分割成3段
+                    string[] data2 = reader.ReadLine().Replace("----", "-").Split('-');
+
+                    //新建一行，并将读出的数据分段，分别存入3个对应的列中
+                    DataRow dr2 = dt_cdk.NewRow();
+                    dr2[0] = data2[0];
+                    dr2[1] = data2[1];
+                    dr2[2] = data2[2];
+                    
+                    //将这行数据加入到datatable中
+                    dt_cdk.Rows.Add(dr2);
+                    cunt++;
+
+                }
+                //关闭文件
+                reader.Close();
+                fileStream.Close();
+                //将datatable绑定到datagridview上显示结果
+                datagridview.DataSource = dt_cdk;
+                label_cdkcount.Text = datagridview.RowCount.ToString();//显示帐号总数
+            }
+            catch (Exception e1)
+            {
+                MessageBox.Show("文件内容格式错误：请导入正确的CDK数据！", "错误：" + e1.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
         /// <summary>
         /// 开始操作-定时器开启
@@ -499,6 +784,7 @@ namespace abfwork
                 SecKillAward();
             }
             button1.Enabled = false;
+
         }
 
         /// <summary>
@@ -523,15 +809,42 @@ namespace abfwork
         }
 
         /// <summary>
+        /// 通过加载验证码 获取cookie******************
+        /// </summary>
+        /// <param name="str_cookie"></param>
+        private string get_cookie()
+        {
+            HttpHelper http = new HttpHelper();
+            HttpItem itemGet = new HttpItem()
+            {
+                URL = duankou_url + "SecurityCode/Code",//URL     必需项    
+                Method = "get",
+                //Cookie = cookie,//字符串Cookie     可选项
+                //用户代理设置为手机浏览器
+                UserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16",
+                IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
+                Referer = duankou_url + "Home/Index",
+                //Postdata = "&oldvalue=" + captcha,//Post数据     可选项GET时不需要写
+                Timeout = 100000,//连接超时时间     可选项默认为100000    
+                ReadWriteTimeout = 30000,//写入Post数据超时时间     可选项默认为30000
+                //ContentType = "application/x-www-form-urlencoded",//返回类型    可选项有默认值 
+            };
+            resultitem = http.GetHtml(itemGet);
+            cookie = resultitem.Cookie.ToString().Split(';')[0];
+            return cookie;
+        }
+
+        /// <summary>
         /// 检测密码登录
         /// </summary>
-        private string LoginOn(string useName, string password)
+        private string LoginOn(string useName, string password,string cookies)
         {
+            //cookie = "ASP.NET_SessionId=" + GenerateRandomNumber(24, 1);
             item = new HttpItem()
             {//登录验证
                 URL = duankou_url + "Account/LoginOn",//URL     必需项    
                 Method = "POST",
-                Cookie = cookie,//字符串Cookie     可选项
+                Cookie = cookies,//字符串Cookie     可选项
                 //用户代理设置为手机浏览器
                 UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36",
                 IsToLower = false,//得到的HTML代码是否转成小写     可选项默认转小写 
@@ -602,7 +915,12 @@ namespace abfwork
         {
             useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
-            string result = LoginOn(useName, password);
+            cookie = dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value.ToString();
+            if (cookie == "")
+            {
+                cookie = get_cookie();
+            }
+            string result = LoginOn(useName, password,cookie);
             if (result == "true")
             {//列出详细的账号信息
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
@@ -638,7 +956,12 @@ namespace abfwork
         {
             useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
-            if (LoginOn(useName, password) == "true")
+            cookie = dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value.ToString();
+            if (cookie == "")
+            {
+                cookie = get_cookie();
+            }
+            if (LoginOn(useName, password,cookie) == "true")
             {//登录成功
                 
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
@@ -956,7 +1279,12 @@ namespace abfwork
             {
                 newPwd = textBox_newpwd.Text;
             }
-            string result = LoginOn(useName, password);
+            cookie = dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value.ToString();
+            if (cookie == "")
+            {
+                cookie = get_cookie();
+            }
+            string result = LoginOn(useName, password,cookie);
             if (result == "true")
             {
 
@@ -1030,7 +1358,12 @@ namespace abfwork
             richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功", DateTime.Now.ToString("HH:mm:ss"), useName));
             useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
-            string result = LoginOn(useName, password);
+            cookie = dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value.ToString();
+            if (cookie == "")
+            {
+                cookie = get_cookie();
+            }
+            string result = LoginOn(useName, password,cookie);
             if (result == "true")
             {//登录成功
                 isloginok = true;
@@ -1193,7 +1526,12 @@ namespace abfwork
         {
             useName = dataGridView1.SelectedRows[0].Cells["ColumnPhoneNum"].Value.ToString();
             password = dataGridView1.SelectedRows[0].Cells["ColumnPwd"].Value.ToString();
-            string result = LoginOn(useName, password);
+            cookie = dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value.ToString();
+            if (cookie == "")
+            {
+                cookie = get_cookie();
+            }
+            string result = LoginOn(useName, password,cookie);
             if (result == "true")
             {//列出详细的账号信息
                 richTextBox1.AppendText(string.Format("\r\n{0}: {1} - 登录成功！", DateTime.Now.ToString("HH:mm:ss"), useName));
@@ -1294,11 +1632,16 @@ namespace abfwork
             string result = resultitem.Html;
         }
 
-        /*
+        
         //取当前webBrowser登录后的Cookie值   
         [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
         static extern bool InternetGetCookieEx(string pchURL, string pchCookieName, StringBuilder pchCookieData, ref int pcchCookieData, int dwFlags, object lpReserved);
-        //取出Cookie，当登录后才能取    
+
+        /// <summary>
+        /// 取出Cookie，当登录后才能取 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         private static string GetCookieString(string url)
         {
             // Determine the size of the cookie      
@@ -1315,7 +1658,93 @@ namespace abfwork
             }
             return cookieData.ToString();
         }
-        */
+
+        public enum ShowCommands : int
+        {
+
+            SW_HIDE = 0,
+
+            SW_SHOWNORMAL = 1,
+
+            SW_NORMAL = 1,
+
+            SW_SHOWMINIMIZED = 2,
+
+            SW_SHOWMAXIMIZED = 3,
+
+            SW_MAXIMIZE = 3,
+
+            SW_SHOWNOACTIVATE = 4,
+
+            SW_SHOW = 5,
+
+            SW_MINIMIZE = 6,
+
+            SW_SHOWMINNOACTIVE = 7,
+
+            SW_SHOWNA = 8,
+
+            SW_RESTORE = 9,
+
+            SW_SHOWDEFAULT = 10,
+
+            SW_FORCEMINIMIZE = 11,
+
+            SW_MAX = 11
+
+        }
+        [DllImport("shell32.dll")]
+        //调用IE API进行清除浏览器数据
+        /*
+        其中ClearMyTracksByProcess 可进行选择设置 ：
+
+        //Temporary Internet Files  （Internet临时文件）
+        //RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 8
+         * 
+        //Cookies
+        //RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 2
+         * 
+        //History (历史记录)
+        //RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 1
+         * 
+        //Form. Data （表单数据）
+        //RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 16
+         * 
+        //Passwords (密码）
+        //RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 32
+         * 
+        //Delete All  （全部删除）
+        //RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255
+         */
+        static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, ShowCommands nShowCmd);
+        
+
+        /// <summary>
+        /// 获取cookie
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        //private void webBrowser1_DocumentCompleted_1(object sender, WebBrowserDocumentCompletedEventArgs e)
+        //{//获取cookie
+        //    if (webBrowser1.Url.ToString() == duankou_url)
+        //    {
+        //        cookie = GetCookieString(duankou_url);//获得cookie 
+
+        //        webBrowser1.Document.Cookie.Remove(0, (webBrowser1.Document.Cookie.Count() - 1));
+        //        richTextBox1.BeginInvoke(new EventHandler(delegate
+        //        {
+        //            richTextBox1.AppendText(string.Format("\r\n{0}: 获得新cookie", DateTime.Now.ToString("HH:mm:ss")));
+        //        }));
+        //        //dataGridView1.BeginInvoke(new ErrorEventHandler(delegate
+        //        //{
+        //            dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value = cookie;//写入新cookie
+        //        //}));
+
+                
+        //    }
+        //}
+
+        
         /// <summary>   
         /// 获取WebBrowser指定的图片   
         /// </summary>   
@@ -1753,7 +2182,11 @@ namespace abfwork
 
         private void timer1_Tick(object sender, EventArgs e)
         {//检测
-
+            if (dataGridView1.SelectedRows[0].Cells["Column_cookie"].Value.ToString() == "")
+            {
+                timer1.Stop();
+                get_cookie();
+            }
             if (comboBox1.SelectedIndex.ToString() == "0" && isbtok != 0)
             {//登录查询
                  isbtok = 0;//重置
@@ -1927,6 +2360,25 @@ namespace abfwork
             {//秒杀
                 SecKillAward_bt();
             }
+            else if (comboBox1.SelectedIndex.ToString() == "7"  && wenjian_ok == 1)
+            {//获取cookie
+                wenjian_ok = 0;//复位
+                if (++numIndexOfDatagridview1Row == dataGridView1.RowCount)
+                {
+                    timer1.Stop();
+                    MessageBox.Show("全部帐号完成！", "提示");
+                    return;
+                }
+                else
+                {
+
+                    this.dataGridView1.Rows[numIndexOfDatagridview1Row].Selected = true;//换下一个帐号
+                    if (numIndexOfDatagridview1Row > 10)
+                        dataGridView1.FirstDisplayedScrollingRowIndex = numIndexOfDatagridview1Row - 10;//滑块位置更新
+
+                }
+                get_cookie();//检查cookie是否已存在
+            }
         }
 
         private void textBox_yzm_TextChanged(object sender, EventArgs e)
@@ -2092,6 +2544,7 @@ namespace abfwork
             {
                 comboBox2.SelectedIndex = 6;
                 comboBox_url.SelectedIndex = 1;
+                checkBox_yzm_zds.Checked = false;
             }
         }
 
@@ -2190,5 +2643,78 @@ namespace abfwork
             }
         }
 
+        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            datagridviewtobin(dataGridView1, "data1.data");
+        }
+
+        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            datagridviewtobin(dataGridView2, "data2.data");
+        }
+
+        /// <summary>
+        /// 右键菜单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.RowIndex >= 0)
+                {
+                    //若行已是选中状态就不再进行设置
+                    if (dataGridView1.Rows[e.RowIndex].Selected == false)
+                    {
+                        dataGridView1.ClearSelection();
+                        dataGridView1.Rows[e.RowIndex].Selected = true;
+                    }
+                    //只选中一行时设置活动单元格
+                    if (dataGridView1.SelectedRows.Count == 1)
+                    {
+                        dataGridView1.CurrentCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                    }
+                    //弹出操作菜单
+                    contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
+                }
+            }
+        }
+
+        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                //弹出操作菜单
+                contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
+
+            }
+
+        }
+
+        private void dataGridView2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                //弹出操作菜单
+                contextMenuStrip2.Show(MousePosition.X, MousePosition.Y);
+
+            }
+        }
+
+        private void 从该行开始ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            numIndexOfDatagridview1Row = dataGridView1.CurrentRow.Index;
+        }
+
+        private void 从该行开始ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            numIndexOfDatagridview2Row = dataGridView2.CurrentRow.Index;
+        }
+       
+
     }
+
+
+
 }

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -97,13 +99,23 @@
             this.ColumnTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Column_xz = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnPhoneNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnPwd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_cookie = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label_time = new System.Windows.Forms.Label();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.label_dszt = new System.Windows.Forms.Label();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.导入剪切板数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.从该行开始ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.删除该行ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.导入剪切板数据ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.从该行开始ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.删除该行ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -118,6 +130,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -268,7 +282,7 @@
             // label_cdkcount
             // 
             this.label_cdkcount.AutoSize = true;
-            this.label_cdkcount.Location = new System.Drawing.Point(618, 612);
+            this.label_cdkcount.Location = new System.Drawing.Point(186, 612);
             this.label_cdkcount.Name = "label_cdkcount";
             this.label_cdkcount.Size = new System.Drawing.Size(11, 12);
             this.label_cdkcount.TabIndex = 22;
@@ -277,7 +291,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(583, 612);
+            this.label8.Location = new System.Drawing.Point(151, 612);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(29, 12);
             this.label8.TabIndex = 21;
@@ -286,7 +300,7 @@
             // label_usenamecount
             // 
             this.label_usenamecount.AutoSize = true;
-            this.label_usenamecount.Location = new System.Drawing.Point(519, 612);
+            this.label_usenamecount.Location = new System.Drawing.Point(87, 612);
             this.label_usenamecount.Name = "label_usenamecount";
             this.label_usenamecount.Size = new System.Drawing.Size(11, 12);
             this.label_usenamecount.TabIndex = 20;
@@ -295,7 +309,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(454, 612);
+            this.label11.Location = new System.Drawing.Point(22, 612);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(59, 12);
             this.label11.TabIndex = 19;
@@ -304,7 +318,7 @@
             // label_lgnerr
             // 
             this.label_lgnerr.AutoSize = true;
-            this.label_lgnerr.Location = new System.Drawing.Point(865, 612);
+            this.label_lgnerr.Location = new System.Drawing.Point(433, 612);
             this.label_lgnerr.Name = "label_lgnerr";
             this.label_lgnerr.Size = new System.Drawing.Size(11, 12);
             this.label_lgnerr.TabIndex = 18;
@@ -313,7 +327,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(800, 612);
+            this.label12.Location = new System.Drawing.Point(368, 612);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(59, 12);
             this.label12.TabIndex = 17;
@@ -322,7 +336,7 @@
             // label_lgnsuccess
             // 
             this.label_lgnsuccess.AutoSize = true;
-            this.label_lgnsuccess.Location = new System.Drawing.Point(753, 612);
+            this.label_lgnsuccess.Location = new System.Drawing.Point(321, 612);
             this.label_lgnsuccess.Name = "label_lgnsuccess";
             this.label_lgnsuccess.Size = new System.Drawing.Size(11, 12);
             this.label_lgnsuccess.TabIndex = 16;
@@ -331,7 +345,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(688, 612);
+            this.label10.Location = new System.Drawing.Point(256, 612);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(59, 12);
             this.label10.TabIndex = 15;
@@ -780,15 +794,16 @@
             this.dataGridView2.Location = new System.Drawing.Point(3, 17);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
             this.dataGridView2.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridView2.RowTemplate.Height = 23;
             this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView2.Size = new System.Drawing.Size(395, 339);
             this.dataGridView2.TabIndex = 0;
+            this.dataGridView2.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellValueChanged);
             this.dataGridView2.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView2_RowPostPaint);
             this.dataGridView2.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGridView2_DragDrop);
             this.dataGridView2.DragEnter += new System.Windows.Forms.DragEventHandler(this.dataGridView2_DragEnter);
+            this.dataGridView2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView2_MouseDown);
             // 
             // ColumnCDK
             // 
@@ -796,7 +811,6 @@
             this.ColumnCDK.FillWeight = 105.4936F;
             this.ColumnCDK.HeaderText = "CDK";
             this.ColumnCDK.Name = "ColumnCDK";
-            this.ColumnCDK.ReadOnly = true;
             // 
             // ColumnResult
             // 
@@ -804,7 +818,6 @@
             this.ColumnResult.FillWeight = 109.6447F;
             this.ColumnResult.HeaderText = "兑换结果";
             this.ColumnResult.Name = "ColumnResult";
-            this.ColumnResult.ReadOnly = true;
             // 
             // ColumnTime
             // 
@@ -812,7 +825,6 @@
             this.ColumnTime.FillWeight = 84.86171F;
             this.ColumnTime.HeaderText = "时间";
             this.ColumnTime.Name = "ColumnTime";
-            this.ColumnTime.ReadOnly = true;
             // 
             // groupBox1
             // 
@@ -832,51 +844,78 @@
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column_xz,
             this.ColumnPhoneNum,
             this.ColumnPwd,
-            this.ColumnStatus});
+            this.ColumnStatus,
+            this.Column_cookie});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 17);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(480, 339);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDown);
+            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
             this.dataGridView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragDrop);
             this.dataGridView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragEnter);
+            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
+            // 
+            // Column_xz
+            // 
+            this.Column_xz.DataPropertyName = "选择";
+            this.Column_xz.FillWeight = 51.47208F;
+            this.Column_xz.HeaderText = "选择";
+            this.Column_xz.Name = "Column_xz";
+            this.Column_xz.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Column_xz.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // ColumnPhoneNum
             // 
             this.ColumnPhoneNum.DataPropertyName = "帐号";
-            this.ColumnPhoneNum.FillWeight = 50F;
+            this.ColumnPhoneNum.FillWeight = 70.93313F;
             this.ColumnPhoneNum.HeaderText = "帐号";
             this.ColumnPhoneNum.Name = "ColumnPhoneNum";
-            this.ColumnPhoneNum.ReadOnly = true;
             // 
             // ColumnPwd
             // 
             this.ColumnPwd.DataPropertyName = "密码";
-            this.ColumnPwd.FillWeight = 40F;
+            this.ColumnPwd.FillWeight = 50.86155F;
             this.ColumnPwd.HeaderText = "密码";
             this.ColumnPwd.Name = "ColumnPwd";
-            this.ColumnPwd.ReadOnly = true;
             // 
             // ColumnStatus
             // 
             this.ColumnStatus.DataPropertyName = "状态";
-            this.ColumnStatus.FillWeight = 200F;
+            this.ColumnStatus.FillWeight = 216.7332F;
             this.ColumnStatus.HeaderText = "状态";
             this.ColumnStatus.Name = "ColumnStatus";
-            this.ColumnStatus.ReadOnly = true;
+            // 
+            // Column_cookie
+            // 
+            this.Column_cookie.DataPropertyName = "cookie";
+            this.Column_cookie.HeaderText = "cookie";
+            this.Column_cookie.Name = "Column_cookie";
+            this.Column_cookie.Visible = false;
             // 
             // timer1
             // 
@@ -886,7 +925,7 @@
             // 
             this.label_time.AutoSize = true;
             this.label_time.ForeColor = System.Drawing.Color.Red;
-            this.label_time.Location = new System.Drawing.Point(13, 612);
+            this.label_time.Location = new System.Drawing.Point(780, 612);
             this.label_time.Name = "label_time";
             this.label_time.Size = new System.Drawing.Size(53, 12);
             this.label_time.TabIndex = 10;
@@ -902,12 +941,70 @@
             this.label_dszt.AutoSize = true;
             this.label_dszt.BackColor = System.Drawing.SystemColors.Control;
             this.label_dszt.ForeColor = System.Drawing.Color.Red;
-            this.label_dszt.Location = new System.Drawing.Point(151, 612);
+            this.label_dszt.Location = new System.Drawing.Point(519, 612);
             this.label_dszt.Name = "label_dszt";
             this.label_dszt.Size = new System.Drawing.Size(83, 12);
             this.label_dszt.TabIndex = 23;
             this.label_dszt.Text = "定时兑换中...";
             this.label_dszt.Visible = false;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.导入剪切板数据ToolStripMenuItem,
+            this.从该行开始ToolStripMenuItem,
+            this.删除该行ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 70);
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.导入剪切板数据ToolStripMenuItem1,
+            this.从该行开始ToolStripMenuItem1,
+            this.删除该行ToolStripMenuItem1});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(161, 70);
+            // 
+            // 导入剪切板数据ToolStripMenuItem
+            // 
+            this.导入剪切板数据ToolStripMenuItem.Enabled = false;
+            this.导入剪切板数据ToolStripMenuItem.Name = "导入剪切板数据ToolStripMenuItem";
+            this.导入剪切板数据ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.导入剪切板数据ToolStripMenuItem.Text = "导入剪切板数据";
+            // 
+            // 从该行开始ToolStripMenuItem
+            // 
+            this.从该行开始ToolStripMenuItem.Name = "从该行开始ToolStripMenuItem";
+            this.从该行开始ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.从该行开始ToolStripMenuItem.Text = "从该行开始";
+            this.从该行开始ToolStripMenuItem.Click += new System.EventHandler(this.从该行开始ToolStripMenuItem_Click);
+            // 
+            // 删除该行ToolStripMenuItem
+            // 
+            this.删除该行ToolStripMenuItem.Name = "删除该行ToolStripMenuItem";
+            this.删除该行ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.删除该行ToolStripMenuItem.Text = "删除该行";
+            // 
+            // 导入剪切板数据ToolStripMenuItem1
+            // 
+            this.导入剪切板数据ToolStripMenuItem1.Enabled = false;
+            this.导入剪切板数据ToolStripMenuItem1.Name = "导入剪切板数据ToolStripMenuItem1";
+            this.导入剪切板数据ToolStripMenuItem1.Size = new System.Drawing.Size(160, 22);
+            this.导入剪切板数据ToolStripMenuItem1.Text = "导入剪切板数据";
+            // 
+            // 从该行开始ToolStripMenuItem1
+            // 
+            this.从该行开始ToolStripMenuItem1.Name = "从该行开始ToolStripMenuItem1";
+            this.从该行开始ToolStripMenuItem1.Size = new System.Drawing.Size(160, 22);
+            this.从该行开始ToolStripMenuItem1.Text = "从该行开始";
+            this.从该行开始ToolStripMenuItem1.Click += new System.EventHandler(this.从该行开始ToolStripMenuItem1_Click);
+            // 
+            // 删除该行ToolStripMenuItem1
+            // 
+            this.删除该行ToolStripMenuItem1.Name = "删除该行ToolStripMenuItem1";
+            this.删除该行ToolStripMenuItem1.Size = new System.Drawing.Size(160, 22);
+            this.删除该行ToolStripMenuItem1.Text = "删除该行";
             // 
             // mainForm
             // 
@@ -958,6 +1055,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1000,9 +1099,6 @@
         private System.Windows.Forms.Label label_cdkcount;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPhoneNum;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPwd;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnStatus;
         private System.Windows.Forms.TextBox textBox_yzm;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox pictureBox1;
@@ -1011,9 +1107,6 @@
         private System.Windows.Forms.Label label_yc;
         private System.Windows.Forms.TextBox textBox_pwd_weishu;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCDK;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnResult;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTime;
         private System.Windows.Forms.TextBox textBox_duihuancishu;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox comboBox2;
@@ -1039,6 +1132,22 @@
         private System.Windows.Forms.CheckBox checkBox_dingshi;
         private System.Windows.Forms.Label label_dszt;
         private System.Windows.Forms.CheckBox checkBox_yzm_zds;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCDK;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnResult;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTime;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_xz;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPhoneNum;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPwd;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnStatus;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_cookie;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 导入剪切板数据ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 从该行开始ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 删除该行ToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem 导入剪切板数据ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 从该行开始ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 删除该行ToolStripMenuItem1;
 
     }
 }
